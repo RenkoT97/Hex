@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import logic.HexLogic;
+import logic.FieldType;
 
 public class Test {
     public static void main (String[] args) { 
@@ -8,7 +9,7 @@ public class Test {
         while (true) {   
             System.out.println("Enter username");
             String[] userName = myObj.nextLine().split(" ");
-            HexLogic.fieldType a = (userName[0].equals("1")) ? HexLogic.fieldType.TYPE1 : HexLogic.fieldType.TYPE2;
+            FieldType a = (userName[0].equals("1")) ? FieldType.TYPE1 : FieldType.TYPE2;
             l.setField(a, Integer.parseInt(userName[1]), Integer.parseInt(userName[2]));
             l.repr(a);
             if (l.hasWon(a)) {
@@ -17,6 +18,5 @@ public class Test {
             }
         }
         myObj.close();
-        
     }
-}
+}g

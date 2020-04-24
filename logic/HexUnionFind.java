@@ -33,7 +33,7 @@ public class HexUnionFind {
             this.structure[i][j] = source.clone();
             i = k; j = l;
         }
-        return source;
+        return source.clone();
     }
 
     public void joinComponents (int i, int j, int k, int l) {
