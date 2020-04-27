@@ -1,8 +1,8 @@
 package logic;
 
 public enum FieldType {
+    TYPE0,
     TYPE1,
-    TYPE2,
     EMPTY,
     INVALID
 };
