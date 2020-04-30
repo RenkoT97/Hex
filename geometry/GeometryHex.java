@@ -4,30 +4,31 @@ import java.awt.Color;
 import java.awt.Polygon;
 import java.awt.Point;
 
-class GeometryHex {
+class HexGeometry {
+	private static final double SQRT3 = Math.sqrt(3);
 	private static double marginRatio = 1 / 20;
-	private static double sqr = Math.sqrt(3);
 	public int boardSize;
 	public double panelHeight, panelWidth;
     private Hexagon[][] hexagonMatrix;
 	private double margin, hexagonEdge, triangleHeight;
 	
-	GeometryHex(int boardSize, double panelHeight, double panelWidth) {
+	HexGeometry(int boardSize, double panelHeight, double panelWidth) {
 		this.boardSize = boardSize;
-		this.panelHeight = panelHeight;
-		this.panelWidth = panelWidth;
 		this.hexagonMatrix = new Hexagon[boardSize][boardSize];
-		this.calculateMargin();
-		this.calculateEdgeLenght();
-		this.calculateTriangleHeight();
-        this.calculateCenters();
-		this.setHexagonMatrix();
+		updateDimensions(panelWidth, panelHeight);
 	}
 
-	//koordinatni sistem se zacne levo zgoraj, prva koordinata je sirina, druga pa visina
+	public void updateDimensions(double width, double height) {
+		this.panelWidth = width;
+		this.panelHeight = height;
+		calculateMargin();
+		calculateEdgeLenght();
+		calculateTriangleHeight();
+        resetHexagonMatrix();
+	}
 
 	private void calculateMargin() {
-		this.margin = GeometryHex.marginRatio * this.panelWidth;
+		this.margin = HexGeometry.marginRatio * this.panelWidth;
 	}
 
 	private void calculateEdgeLenght() {
@@ -35,13 +36,13 @@ class GeometryHex {
 		double boardWidth = this.panelWidth - 2 * this.margin;
 		double foo = 3.0 * this.boardSize - 1;
 		this.hexagonEdge = Math.min(
-			2 * (boardWidth) / (GeometryHex.sqr * foo),
+			2 * (boardWidth) / (HexGeometry.SQRT3 * foo),
 			2 * (boardHeight) / foo
 		);
 	}
 
 	private void calculateTriangleHeight() {
-		this.triangleHeight = GeometryHex.sqr * this.hexagonEdge / 2;
+		this.triangleHeight = HexGeometry.SQRT3 * this.hexagonEdge / 2;
 	}
 	
 	private double[][][] calculateCenters() {
@@ -53,24 +54,14 @@ class GeometryHex {
 		for (int i = 0; i < this.boardSize; i++) {
 			double width1 = width;
 			for (int j = 0; j < this.boardSize; j++) {
-				hexagonCenters[i][j][0] = width1;
-				width1 += 2 * this.triangleHeight;
+				hexagonCenters[i][j][0] = width1;				
 				hexagonCenters[i][j][1] = height;
+				width1 += 2 * this.triangleHeight;
 			}
 			width += dwidth;
 			height += dheight;
 		}
 		return hexagonCenters;
-	}
-
-	public void updateDimensions(double width, double height) {
-		this.panelWidth = width;
-		this.panelHeight = height;
-		calculateMargin();
-		calculateEdgeLenght();
-		calculateTriangleHeight();
-		calculateCenters();
-        resetHexagonMatrix();
 	}
 	
 	public void write() {
@@ -78,13 +69,14 @@ class GeometryHex {
 	}
 	
 	public double[][] vertices(double x, double y) {
-		double[][] array = new double[6][2];
-		double[] array1 = new double[6];
-		for (int i = 0; i < 6; i++)
-			array1[i] = Math.PI / 6 + i * Math.PI / 3;
+		double[] verticeArray = new double[6];
 		for (int i = 0; i < 6; i++) {
-			array[i][0] = x + this.hexagonEdge * Math.cos(array1[i]);
-			array[i][1] = y - this.hexagonEdge * Math.sin(array1[i]);
+			verticeArray[i] = Math.PI / 6 + i * Math.PI / 3;
+		}
+		double[][] array = new double[6][2];
+		for (int i = 0; i < 6; i++) {
+			array[i][0] = x + this.hexagonEdge * Math.cos(verticeArray[i]);
+			array[i][1] = y - this.hexagonEdge * Math.sin(verticeArray[i]);
 		}
 		return array;
 	}
@@ -106,56 +98,54 @@ class GeometryHex {
 		for (int i = 0; i < this.boardSize; i++)
 			for (int j = 0; j < this.boardSize; j++)
 				this.hexagonMatrix[i][j].resetVertices(vertices(
-				hexagonCenters[i][j][0],
-				hexagonCenters[i][j][1]
+					hexagonCenters[i][j][0],
+					hexagonCenters[i][j][1]
 				));
 	}
 
-	public void updateHexagonMatrix(int i, int j, Color color) {
+	public void updateColor(int i, int j, Color color) {
 		this.hexagonMatrix[i][j].changeColor(color);
 	}
 
-	public int[] getHexagon(double x, double y) {
-		double width = x - this.margin - GeometryHex.sqr * ((y - this.margin) / 3 - this.hexagonEdge / 2);
-		double height = 2 * y / GeometryHex.sqr - this.margin;
-		int firstRow = (int)Math.floor((height - this.hexagonEdge / 2) / (2 * this.hexagonEdge));
-		int lastRow = (int)Math.ceil(height / (2 * this.hexagonEdge));
-		int[] rows = new int[lastRow - firstRow + 1];
-		int firstColumn = (int)Math.floor((width - this.hexagonEdge / 2) / (2 * this.hexagonEdge));
-		int lastColumn = (int)Math.ceil(width / (2 * this.hexagonEdge));
-		int[] columns = new int[lastColumn - firstColumn + 1];
-		for (int i = 0; i < rows.length; i++) {
-			rows[i] = firstRow;
-			firstRow++;
-		}
-		for (int i = 0; i < columns.length; i++) {
-			columns[i] = firstColumn;
-			firstColumn += 1;
-		}
-		for (int i = 0; i < rows.length; i++) {
-			for (int j = 0; j < columns.length; j++) {
-				if ((rows[i] >= 0) && (rows[i] < this.boardSize)) {
-					if ((columns[j] >= 0) && (columns[j] <= this.boardSize)) {
-						Hexagon hexagon = this.hexagonMatrix[rows[i]][columns[j]];
-						if (isInConvexHull(x, y, hexagon)) {
-							int[] place = {rows[i], columns[j]};
-							return place;
-						}
-					}
+	public double[] translateCoordinates(double x, double y) {
+		return new double[] {
+			x - this.margin - HexGeometry.SQRT3 * (
+				(y - this.margin) / 3 - this.hexagonEdge / 2
+			), 2 * y / HexGeometry.SQRT3 - this.margin
+		};
+	}
+
+	public Hexagon getHexagon(double x, double y) {
+		double[] xy = translateCoordinates(x, y);
+		double diag = 2 * this.hexagonEdge;
+		int firstRow = (int) Math.floor(
+			(xy[1] - this.hexagonEdge / 2) / diag
+		);
+		int lastRow = (int) Math.ceil(xy[1] / diag);
+		int firstColumn = (int) Math.floor(
+			(xy[0] - this.hexagonEdge / 2) / diag
+		);
+		int lastColumn = (int) Math.ceil(xy[0] / diag);
+		for (int i = firstRow; i <= lastRow; i++)
+			for (int j = firstColumn; j <= lastColumn; j++)
+				if ((i >= 0) && (i < this.boardSize) &&
+					(j >= 0) && (j < this.boardSize)
+				) {
+					Hexagon hexagon = this.hexagonMatrix[i][j];
+					if (isInConvexHull(x, y, hexagon))
+						return hexagon;
 				}
-			}
-		}
 		return null;
 	}
 	 
 
 	public boolean isInConvexHull(double x, double y, Hexagon hexagon) {		
-		Point point = new Point((int)Math.round(x), (int)Math.round(y));
+		Point point = new Point((int) Math.round(x), (int) Math.round(y));
 		int[] xs = new int[6];
 		int[] ys = new int[6];
 		for (int i = 0; i < 6; i++) {
-			xs[i] = (int)Math.round(hexagon.vertices[i][0]);
-			ys[i] = (int)Math.round(hexagon.vertices[i][1]);
+			xs[i] = (int) Math.round(hexagon.vertices[i][0]);
+			ys[i] = (int) Math.round(hexagon.vertices[i][1]);
 		}
 		Polygon polygon = new Polygon(xs,ys,6);
 		return polygon.contains(point);
