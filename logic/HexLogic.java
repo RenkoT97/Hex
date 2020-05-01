@@ -43,7 +43,6 @@ public class HexLogic {
         if (i == 0) this.uf.joinComponents(i, j, -1, 0);
         if (i == n - 1) this.uf.joinComponents(i, j, n, 0);
         this.joinComponentsAround(FieldType.TYPE0, i, j);
-        
     }
 
     private void setFieldType1 (int i, int j) {
@@ -58,17 +57,15 @@ public class HexLogic {
             this.fieldAt(i, j).equals(FieldType.EMPTY) && 
             player == this.currentPlayer
         )) return false;
-        else if (player == false) 
-            this.setFieldType0(i, j);
-        else if (player == true) 
-            this.setFieldType1(i, j);
+        else if (player == false) this.setFieldType0(i, j);
+        else if (player == true) this.setFieldType1(i, j);
         this.currentPlayer = !this.currentPlayer;
         return true;
     }
 
     public boolean hasWon (boolean player) {
         if (player == false) 
-            return this.uf.inSameComponent(-1,0,-1,n-1);
+            return this.uf.inSameComponent(-1,0,n,0);
         else 
             return this.uf.inSameComponent(0,-1,0,n);
     }

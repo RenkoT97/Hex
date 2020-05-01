@@ -9,14 +9,17 @@ public class Test {
         while (true) {   
             System.out.println("Enter username");
             String[] userName = myObj.nextLine().split(" ");
-            FieldType a = (userName[0].equals("1")) ? FieldType.TYPE1 : FieldType.TYPE2;
-            l.setField(a, Integer.parseInt(userName[1]), Integer.parseInt(userName[2]));
-            l.repr(a);
-            if (l.hasWon(a)) {
-                System.out.println(a.name());
+            boolean player = userName[0].equals("1");
+            l.makeMove(
+                player, 
+                Integer.parseInt(userName[1]), 
+                Integer.parseInt(userName[2])
+            );
+            if (l.hasWon(player)) {
+                System.out.println((player) ? "player1" : "player2");
                 break;
             }
         }
         myObj.close();
     }
-}g
+}
