@@ -20,36 +20,45 @@ public class HexGeometry {
 	}
 	
 	public HexGeometry(
-		int boardSize, double panelWidth, double panelHeight, 
-		double marginX, double marginY
+		int boardSize, double panelWidth, double panelHeight
 	) {
 		this.boardSize = boardSize;
 		this.hexagonMatrix = new Hexagon[boardSize][boardSize];
 		updateDimensions(
-			panelWidth, panelHeight, marginX, marginY
+			panelWidth, panelHeight
 		);
 	}
 
 	public void updateDimensions(
-		double width, double height, 
-		double marginX, double marginY
+		double width, double height
 	) {
 		this.panelWidth = width;
 		this.panelHeight = height;
-		this.marginX = marginX;
-		this.marginY = marginY;
 		calculateEdgeLenght();
 		calculateTriangleHeight();
-        setHexagonMatrix();
+		calculateMargins();
+		setHexagonMatrix();
+		System.out.println(this.panelHeight);
+		System.out.println(this.panelWidth);
+		System.out.println(this.hexagonEdge);
+		System.out.println(this.marginY + this.hexagonEdge /2 + 3.0 * this.hexagonEdge * this.boardSize / 2);
+		boolean a = this.panelHeight > this.marginY + this.hexagonEdge /2 + 3.0 * this.hexagonEdge * this.boardSize / 2;
+		System.out.println(a);
 	}
 
 	private void calculateEdgeLenght() {
-		double boardHeight = this.panelHeight - 2 * this.marginY;
-		double boardWidth = this.panelWidth - 2 * this.marginX;
+		double boardHeight = this.panelHeight -  5;// * this.marginY;
+		double boardWidth = this.panelWidth - 5;// * this.marginX;
 		this.hexagonEdge = 2 * Math.min(
-			boardWidth / HexGeometry.SQRT3, 
+			boardWidth
+		/ (HexGeometry.SQRT3 * (3.0 * this.boardSize - 1) + 6), 
 			boardHeight
-		) / (3.0 * this.boardSize - 1);
+		 / (3.0 * this.boardSize + 1) - 6);
+	}
+
+	private void calculateMargins() {
+		this.marginX = (this.panelWidth - this.triangleHeight * (3 * this.boardSize - 1)) / 2;
+		this.marginY = (this.panelHeight - this.hexagonEdge * (3 * this.boardSize + 1) / 2) / 2;
 	}
 
 	private void calculateTriangleHeight() {
@@ -103,8 +112,8 @@ public class HexGeometry {
 			(xy[0] - this.hexagonEdge / 2) / diag
 		);
 		int lastColumn = (int) Math.ceil(xy[0] / diag);
-		for (int i = firstRow; i <= lastRow; i++)
-			for (int j = firstColumn; j <= lastColumn; j++)
+		for (int i = firstRow; i <= lastRow + 1; i++)
+			for (int j = firstColumn; j <= lastColumn + 1; j++)
 				if ((i >= 0) && (i < this.boardSize) &&
 					(j >= 0) && (j < this.boardSize)
 				) {

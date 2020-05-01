@@ -22,7 +22,7 @@ class Game extends JPanel implements
         this.hover = Color.GRAY;
         this.logic = new HexLogic(n);
         this.geometry = new HexGeometry(
-            n, width, height, 10, 10
+            n, width, height
         );
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
@@ -32,7 +32,7 @@ class Game extends JPanel implements
         int width, int height, int marginX, int marginY
     ) {
         this.geometry.updateDimensions(
-            width, height, marginX, marginY
+            width, height
         );
         this.repaint();
     }
