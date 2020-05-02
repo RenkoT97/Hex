@@ -38,17 +38,11 @@ public class HexGeometry {
 		calculateTriangleHeight();
 		calculateMargins();
 		setHexagonMatrix();
-		System.out.println(this.panelHeight);
-		System.out.println(this.panelWidth);
-		System.out.println(this.hexagonEdge);
-		System.out.println(this.marginY + this.hexagonEdge /2 + 3.0 * this.hexagonEdge * this.boardSize / 2);
-		boolean a = this.panelHeight > this.marginY + this.hexagonEdge /2 + 3.0 * this.hexagonEdge * this.boardSize / 2;
-		System.out.println(a);
 	}
 
 	private void calculateEdgeLenght() {
-		double boardHeight = this.panelHeight -  5;// * this.marginY;
-		double boardWidth = this.panelWidth - 5;// * this.marginX;
+		double boardHeight = this.panelHeight -  5;
+		double boardWidth = this.panelWidth - 5;
 		this.hexagonEdge = 2 * Math.min(
 			boardWidth
 		/ (HexGeometry.SQRT3 * (3.0 * this.boardSize - 1) + 6), 
@@ -57,8 +51,16 @@ public class HexGeometry {
 	}
 
 	private void calculateMargins() {
-		this.marginX = (this.panelWidth - this.triangleHeight * (3 * this.boardSize - 1)) / 2;
-		this.marginY = (this.panelHeight - this.hexagonEdge * (3 * this.boardSize + 1) / 2) / 2;
+		this.marginX = (
+			this.panelWidth - this.triangleHeight * (
+				3 * this.boardSize - 1
+			)
+		) / 2;
+		this.marginY = (
+			this.panelHeight - this.hexagonEdge * (
+				3 * this.boardSize + 1
+			) / 2
+		) / 2;
 	}
 
 	private void calculateTriangleHeight() {
