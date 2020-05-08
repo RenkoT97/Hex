@@ -24,9 +24,7 @@ public class HexGeometry {
 	) {
 		this.boardSize = boardSize;
 		this.hexagonMatrix = new Hexagon[boardSize][boardSize];
-		updateDimensions(
-			panelWidth, panelHeight
-		);
+		updateDimensions(panelWidth, panelHeight);
 	}
 
 	public void updateDimensions(

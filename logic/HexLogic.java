@@ -1,12 +1,13 @@
 package logic;
 import logic.HexUnionFind;
-import logic.FieldType;
+import enums.FieldType;
+import enums.PlayerIndex;
 
 public class HexLogic {
     public int boardLength, boardSize, n;
+    public PlayerIndex currentPlayer;
     private FieldType[][] board;
     private HexUnionFind uf;
-    private boolean currentPlayer;
     private static int[][] fieldRelations = {
         {1, -1}, {1, 0}, {0, 1}, 
         {0, -1}, {-1, 1}, {-1, 0}
@@ -15,7 +16,7 @@ public class HexLogic {
     public HexLogic (int n) {
         this.boardLength = this.n = n;
         this.boardSize = n * n;
-        this.currentPlayer = false;
+        this.currentPlayer = PlayerIndex.PLAYER0;
         this.uf = new HexUnionFind(n);
         this.board = new FieldType[n][n];
         for (int i = 0; i < n; i++) 
@@ -52,22 +53,30 @@ public class HexLogic {
         this.joinComponentsAround(FieldType.TYPE1, i, j);
     }
 
-    public boolean makeMove(boolean player, int i, int j) {
+    public boolean makeMove(PlayerIndex player, int i, int j) {
         if (!(
             this.fieldAt(i, j).equals(FieldType.EMPTY) && 
-            player == this.currentPlayer
+            this.currentPlayer.equals(player)
         )) return false;
-        else if (player == false) this.setFieldType0(i, j);
-        else if (player == true) this.setFieldType1(i, j);
-        this.currentPlayer = !this.currentPlayer;
+        switch (player) {
+            case PLAYER0: 
+                this.setFieldType0(i, j);
+                this.currentPlayer = PlayerIndex.PLAYER1;
+            case PLAYER1: 
+                this.setFieldType1(i, j);
+                this.currentPlayer = PlayerIndex.PLAYER0;
+        }
         return true;
     }
 
-    public boolean hasWon (boolean player) {
-        if (player == false) 
-            return this.uf.inSameComponent(-1,0,n,0);
-        else 
-            return this.uf.inSameComponent(0,-1,0,n);
+    public boolean hasWon (PlayerIndex player) {
+        switch (player) {
+            case PLAYER0: 
+                return this.uf.inSameComponent(-1,0,n,0);
+            case PLAYER1: 
+                return this.uf.inSameComponent(0,-1,0,n);
+        }
+        return false;
     }
 
     public void repr (FieldType t) {
