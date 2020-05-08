@@ -101,7 +101,7 @@ public class HexGeometry {
 		return new double[] {tx, ty};
 	}
 
-	public Hexagon getHexagonByPosition(double x, double y) {
+	public int[] getIndexByPosition (double x, double y) {
 		double[] xy = translateCoordinates(x, y);
 		double diag = 2 * this.hexagonEdge;
 		int firstRow = (int) Math.floor(
@@ -118,8 +118,15 @@ public class HexGeometry {
 					(j >= 0) && (j < this.boardSize)
 				) {
 					Hexagon hexagon = this.hexagonMatrix[i][j];
-					if (hexagon.contains(x, y)) return hexagon;
+					if (hexagon.contains(x, y)) 
+						return new int[] {i, j};
 				}
+		return null;
+	}
+
+	public Hexagon getHexagonByPosition(double x, double y) {
+		int[] ij = this.getIndexByPosition(x, y);
+		if (ij != null) return this.hexagonMatrix[ij[0]][ij[1]];
 		return null;
 	}
 

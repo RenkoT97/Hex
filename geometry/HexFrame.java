@@ -9,6 +9,7 @@ import enums.PlayerIndex;
 import enums.PlayerType;
 import logic.HexPlayer;
 import logic.HexGame;
+import leader.Leader;
 
 public class HexFrame implements ActionListener, ComponentListener {
     private int height, width;
@@ -30,15 +31,15 @@ public class HexFrame implements ActionListener, ComponentListener {
         this.options = new JMenuBar();
         this.gameOptions = new JMenu("Game Settings");
 
-        this.gameSize = new JMenuItem("gameSize");
+        this.gameSize = new JMenuItem("Game Size");
         this.gameOptions.add(gameSize);
         this.gameSize.addActionListener(this);
 
-        this.playerTypes = new JMenuItem("playertypes");
+        this.playerTypes = new JMenuItem("Player Types");
         this.gameOptions.add(playerTypes);
         this.playerTypes.addActionListener(this);
 
-        this.gameStart = new JMenuItem("startgame");
+        this.gameStart = new JMenuItem("Start Game");
         this.gameOptions.add(gameStart);
         this.gameStart.addActionListener(this);
 
@@ -50,37 +51,69 @@ public class HexFrame implements ActionListener, ComponentListener {
         this.mainframe.setFocusable(true);
     }
 
-    private void newHex (int n) {
+    private void resetHexSize (int n) {
         this.n = n;
         if (this.hexPanel == null) {
             this.hexPanel = new HexPanel(n, width, height);
             this.mainframe.add(hexPanel);
-        } else this.hexPanel.changeSize(n);
+        } else this.hexPanel.resetHexSize(n);
         this.hexPanel.setFocusable(true);
         this.hexPanel.setVisible(true);
         this.hexPanel.updateUI();
     }
 
-    private int grabInputNum (String title) {
+    private int inputGameSize () {
         return Integer.parseInt(
             JOptionPane.showInputDialog(
-                this.mainframe, title
+                this.mainframe, 
+                "Select Game Size"
             )
+        );
+    }
+
+    private String inputPlayerTypes () {
+        String[] possibilities = {
+            "Human on Human", 
+            "Human on Machine", 
+            "Machine on Machine"
+        };
+        return (String) JOptionPane.showInputDialog(
+            this.mainframe,
+            "Choose Player Types",
+            "Player Options",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            possibilities,
+            "Human on Human"
         );
     }
 
     public void actionPerformed (ActionEvent e) {
         String name = e.getActionCommand();
-        if (name.equals("gameSize")) {
-            int n = grabInputNum("Select Game Size");
-            this.newHex (n);
-        } else if (name.equals("playerTypes")) {
-            
-        } else if (name.equals("gamestart")) {
+        if (name.equals("Game Size")) {
+            int n = inputGameSize();
+            this.resetHexSize (n);
+        } else if (name.equals("Player Types")) {
+            String s = inputPlayerTypes();
+            PlayerType t1, t2;
+            if (s.equals("Human on Human")) {
+                t1 = PlayerType.HUMAN;
+                t2 = PlayerType.HUMAN;
+            } else if (s.equals("Human on Machine")) {
+                t1 = PlayerType.HUMAN;
+                t2 = PlayerType.MACHINE;
+            } else if (s.equals("Machine on Machine")) {
+                t1 = PlayerType.MACHINE;
+                t2 = PlayerType.MACHINE;
+            } else return;
+            this.player1 = new HexPlayer(PlayerIndex.PLAYER0, t1);
+            this.player2 = new HexPlayer(PlayerIndex.PLAYER1, t2);
+        } else if (name.equals("Start Game")) {
             if (this.n > 0 && 
                 this.player1 != null &&
-                this.player2 != null
-            ) this.game = new HexGame (n, player1, player2);
+                this.player2 != null &&
+                this.game == null
+            ) Leader.newGame(n, player1, player2);
         }
     }
 

@@ -4,8 +4,11 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import leader.Leader;
 import geometry.HexGeometry;
 import geometry.Hexagon;
+import enums.FieldType;
+import enums.PlayerIndex;
 
 @SuppressWarnings("serial")
 public class HexPanel extends JPanel implements
@@ -13,25 +16,25 @@ public class HexPanel extends JPanel implements
 {   
     private static Color COLOR_EMPTY_EDGE = Color.WHITE;
     private static Color COLOR_EMPTY_FILL = Color.BLACK;
-    private static Color COLOR_HOVER = Color.RED;
-    private static Color COLOR_PLAYER1 = Color.BLUE;
-    private static Color COLOR_PLAYER2 = Color.GREEN;
+    private static Color COLOR_HOVER = new Color(15, 15, 15);
+    private static Color COLOR_PLAYER0 = Color.BLUE;
+    private static Color COLOR_PLAYER1 = Color.GREEN;
 
     private int n, width, height;
     private Hexagon hovering;
     private HexGeometry geometry;
+    private PlayerIndex currentPlayer;
 
     public HexPanel (int n, int width, int height) {
-        this.n = n;
+        this.currentPlayer = PlayerIndex.PLAYER0;
         this.width = width;
         this.height = height;
-        this.geometry = new HexGeometry(n, width, height);
+        this.resetHexSize(n);
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
-        this.repaint();
     }
 
-    public void changeSize (int n) {
+    public void resetHexSize (int n) {
         this.n = n;
         this.geometry = new HexGeometry(n, this.width, this.height);
         this.repaint();
@@ -61,32 +64,53 @@ public class HexPanel extends JPanel implements
     }
 
     @Override
-    public void mousePressed (MouseEvent e) {
+    public void mouseClicked (MouseEvent e) {
         int x = e.getX(); int y = e.getY();
-        Hexagon h = geometry.getHexagonByPosition(x, y);
-        h.color = Color.RED; // determine action
-        this.repaint();
+        int[] ij = geometry.getIndexByPosition(x, y);
+        if (ij == null) return;
+        boolean isvalid = Leader.playHuman (ij[0], ij[1]);
+        if (isvalid) {
+            Hexagon hex = this.geometry.getHexagonByIndex(ij[0], ij[1]);
+            switch (this.currentPlayer) {
+                case PLAYER0: 
+                    hex.color = COLOR_PLAYER0;
+                    hex.type = FieldType.TYPE0;
+                    this.currentPlayer = PlayerIndex.PLAYER1;
+                    break;
+                case PLAYER1:
+                    hex.color = COLOR_PLAYER1;
+                    hex.type = FieldType.TYPE1;
+                    this.currentPlayer = PlayerIndex.PLAYER0;
+                    break;
+            }
+            this.repaint();
+        }
     }
 
     @Override
-    public void mouseClicked (MouseEvent e) {
-        int x = e.getX(); int y = e.getY();
-        Hexagon h = geometry.getHexagonByPosition(x, y);
-        h.color = Color.RED; // determine action
-        this.repaint();
+    public void mousePressed (MouseEvent e) {
+        this.mouseClicked (e);
     }
 
     @Override
     public void mouseMoved (MouseEvent e) {
         int x = e.getX(); int y = e.getY();
         Hexagon hexag = geometry.getHexagonByPosition(x, y);
+
         if (hexag != null) {
-            if (this.hovering != null)
-                this.hovering.color = Color.BLACK;
-            this.hovering = hexag;
-            this.hovering.color = COLOR_HOVER;
+            if (
+                this.hovering != null && 
+                this.hovering.type.equals(FieldType.EMPTY)
+            ) this.hovering.color = COLOR_EMPTY_FILL;
+            if (hexag.type.equals(FieldType.EMPTY)) {
+                this.hovering = hexag;
+                this.hovering.color = COLOR_HOVER;
+            }
             this.repaint();
-        } else if (this.hovering != null) {
+        } else if (
+            this.hovering != null &&
+            this.hovering.type.equals(FieldType.EMPTY)
+        ) {
             this.hovering.color = COLOR_EMPTY_FILL;
             this.hovering = null;
             this.repaint();

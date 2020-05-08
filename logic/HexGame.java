@@ -19,13 +19,25 @@ public class HexGame {
         this.playermap.put(PlayerIndex.PLAYER1, p1);
     }
 
-    public void playTurn (HexPlayer p, int i, int j) {
-        this.hexlogic.makeMove(p.index, i, j);
+    public boolean playTurn (HexPlayer p, int i, int j) {
+        if (this.hexlogic.moveValid(p.index, i, j)) {
+            this.hexlogic.makeMove(p.index, i, j);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean playTurn (int i, int j) {
+        return this.playTurn (this.currentPlayer(), i, j);
     }
 
     public HexPlayer currentPlayer () {
         return this.playermap.get(
             this.hexlogic.currentPlayer
         );
+    }
+
+    public boolean hasWon (HexPlayer p) {
+        return this.hexlogic.hasWon(p.index);
     }
 }

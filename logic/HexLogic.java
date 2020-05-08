@@ -53,20 +53,24 @@ public class HexLogic {
         this.joinComponentsAround(FieldType.TYPE1, i, j);
     }
 
-    public boolean makeMove(PlayerIndex player, int i, int j) {
-        if (!(
+    public boolean moveValid (PlayerIndex player, int i, int j) {
+        return (
             this.fieldAt(i, j).equals(FieldType.EMPTY) && 
             this.currentPlayer.equals(player)
-        )) return false;
+        );
+    }
+
+    public void makeMove(PlayerIndex player, int i, int j) {
         switch (player) {
             case PLAYER0: 
                 this.setFieldType0(i, j);
                 this.currentPlayer = PlayerIndex.PLAYER1;
+                break;
             case PLAYER1: 
                 this.setFieldType1(i, j);
                 this.currentPlayer = PlayerIndex.PLAYER0;
+                break;
         }
-        return true;
     }
 
     public boolean hasWon (PlayerIndex player) {
