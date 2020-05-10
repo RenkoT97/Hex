@@ -7,7 +7,7 @@ import enums.FieldType;
 
 @SuppressWarnings("serial")
 public class Hexagon extends Polygon {
-	public Color color;
+	public Color color, borderColor;
 	public FieldType type;
 
 	public Hexagon(int[] vx, int[] vy) {

@@ -1,5 +1,7 @@
 package geometry;
 
+import java.util.HashSet;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -59,7 +61,10 @@ public class HexPanel extends JPanel implements
                 Hexagon hx = geometry.getHexagonByIndex(i, j);
                 g.setColor((hx.color == null) ? COLOR_EMPTY_FILL : hx.color);
                 g.fillPolygon(hx);
-                g.setColor(COLOR_EMPTY_EDGE);
+                g.setColor(
+                    (hx.borderColor == null) ? 
+                    COLOR_EMPTY_FILL : hx.borderColor
+                );
                 g.drawPolygon(hx);
             }
     }
@@ -70,7 +75,6 @@ public class HexPanel extends JPanel implements
         int[] ij = geometry.getIndexByPosition(x, y);
         if (ij == null) return;
         LeaderCode status = Leader.playHuman (ij[0], ij[1]);
-        System.out.println("status" + status.name());
         switch (status) {
             case MOVE_VALID:
                 Hexagon hex = this.geometry.getHexagonByIndex(
@@ -91,9 +95,15 @@ public class HexPanel extends JPanel implements
                 this.repaint();
                 break;
             case PLAYER_WON:
-                System.out.println(
-                    "Player " + this.currentPlayer + " won"
-                );
+                HashSet<int[]> path = Leader.winningPath();
+                if (path == null) return;
+                for (int[] cord : path) {
+                    Hexagon hx = this.geometry.getHexagonByIndex(
+                        cord[0], cord[1]
+                    );
+                    if (hx != null)
+                        hx.borderColor = Color.YELLOW;
+                }
                 break;
             case MOVE_INVALID:
                 System.out.println("Move Invalid");

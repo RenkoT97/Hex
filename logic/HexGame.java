@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import enums.LeaderCode;
 import enums.PlayerIndex;
@@ -44,6 +45,16 @@ public class HexGame {
         return this.hexlogic.hasWon(
             this.currentPlayer().index
         );
+    }
+
+    public HexPlayer getWinner () {
+        PlayerIndex winner = this.hexlogic.winner;
+        if (winner == null) return null;
+        return this.playermap.get(winner);
+    }
+
+    public HashSet<int[]> getWinningPath () {
+        return this.hexlogic.winningPath();
     }
 
     public void repr() {

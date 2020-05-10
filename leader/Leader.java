@@ -1,5 +1,6 @@
 package leader;
 
+import java.util.HashSet;
 import enums.PlayerType;
 import enums.PlayerIndex;
 import enums.LeaderCode;
@@ -25,13 +26,16 @@ public class Leader {
         hexgame = new HexGame(n, p1, p2);
     }
 
+    public static HashSet<int[]> winningPath () {
+        return hexgame.getWinningPath();
+    }
+
     public static LeaderCode playHuman (int i, int j) {
         if (hexgame == null || !humanTurn()) 
             return LeaderCode.MOVE_INVALID;
         boolean isvalid = hexgame.playTurn(i, j);
         if (!isvalid) 
             return LeaderCode.MOVE_INVALID;
-        System.out.println("REPR");
         hexgame.repr();
         boolean haswon = hexgame.hasWon();
         if (haswon) 
