@@ -1,9 +1,11 @@
 package logic;
 
 public class HexUnionFind {
+    private int n;
     private int[][][] structure;
     
     public HexUnionFind (int n) {
+        this.n = n;
         this.structure = new int[n+2][n+2][2];
         for (int i = 1; i < n + 1; i++)
             for (int j = 0; j < n; j++) {
@@ -48,5 +50,15 @@ public class HexUnionFind {
         int[] sourceij = this.getSource(i+1, j+1);
         int[] sourcekl = this.getSource(k+1, l+1);
         return (sourceij[0] == sourcekl[0] && sourceij[1] == sourcekl[1]);
+    }
+
+    public void repr() {
+        for (int i = 0; i < n + 2; i++) {
+            for (int j = 0; j < n + 2; j++) {
+                int[] field = this.structure[i][j];
+                System.out.println(field[0] + " " + field[1]);
+            }
+            System.out.println("");
+        }
     }
 }

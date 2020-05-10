@@ -2,6 +2,7 @@ package logic;
 
 import java.util.HashMap;
 
+import enums.LeaderCode;
 import enums.PlayerIndex;
 import logic.HexLogic;
 import logic.HexPlayer;
@@ -30,7 +31,6 @@ public class HexGame {
     public boolean playTurn (int i, int j) {
         return this.playTurn (this.currentPlayer(), i, j);
     }
-
     public HexPlayer currentPlayer () {
         return this.playermap.get(
             this.hexlogic.currentPlayer
@@ -39,5 +39,14 @@ public class HexGame {
 
     public boolean hasWon (HexPlayer p) {
         return this.hexlogic.hasWon(p.index);
+    }
+    public boolean hasWon () {
+        return this.hexlogic.hasWon(
+            this.currentPlayer().index
+        );
+    }
+
+    public void repr() {
+        this.hexlogic.repr();
     }
 }

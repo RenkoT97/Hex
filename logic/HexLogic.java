@@ -83,7 +83,9 @@ public class HexLogic {
         return false;
     }
 
-    public void repr (FieldType t) {
+    public void repr () {
+        this.uf.repr();
+        System.out.println("");
         for (int i = 0; i < this.boardLength; i++) {
             for (int j = 0; j < this.boardLength; j++) 
                 System.out.print(this.board[i][j].name());

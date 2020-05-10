@@ -4,11 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import enums.FieldType;
+import enums.PlayerIndex;
+import enums.LeaderCode;
 import leader.Leader;
 import geometry.HexGeometry;
 import geometry.Hexagon;
-import enums.FieldType;
-import enums.PlayerIndex;
 
 @SuppressWarnings("serial")
 public class HexPanel extends JPanel implements
@@ -68,35 +69,47 @@ public class HexPanel extends JPanel implements
         int x = e.getX(); int y = e.getY();
         int[] ij = geometry.getIndexByPosition(x, y);
         if (ij == null) return;
-        boolean isvalid = Leader.playHuman (ij[0], ij[1]);
-        if (isvalid) {
-            Hexagon hex = this.geometry.getHexagonByIndex(ij[0], ij[1]);
-            switch (this.currentPlayer) {
-                case PLAYER0: 
-                    hex.color = COLOR_PLAYER0;
-                    hex.type = FieldType.TYPE0;
-                    this.currentPlayer = PlayerIndex.PLAYER1;
-                    break;
-                case PLAYER1:
-                    hex.color = COLOR_PLAYER1;
-                    hex.type = FieldType.TYPE1;
-                    this.currentPlayer = PlayerIndex.PLAYER0;
-                    break;
-            }
-            this.repaint();
-        }
+        LeaderCode status = Leader.playHuman (ij[0], ij[1]);
+        System.out.println("status" + status.name());
+        switch (status) {
+            case MOVE_VALID:
+                Hexagon hex = this.geometry.getHexagonByIndex(
+                    ij[0], ij[1]
+                );
+                switch (this.currentPlayer) {
+                    case PLAYER0: 
+                        hex.color = COLOR_PLAYER0;
+                        hex.type = FieldType.TYPE0;
+                        this.currentPlayer = PlayerIndex.PLAYER1;
+                        break;
+                    case PLAYER1:
+                        hex.color = COLOR_PLAYER1;
+                        hex.type = FieldType.TYPE1;
+                        this.currentPlayer = PlayerIndex.PLAYER0;
+                        break;
+                }
+                this.repaint();
+                break;
+            case PLAYER_WON:
+                System.out.println(
+                    "Player " + this.currentPlayer + " won"
+                );
+                break;
+            case MOVE_INVALID:
+                System.out.println("Move Invalid");
+                break;
+        }  
     }
 
     @Override
     public void mousePressed (MouseEvent e) {
-        this.mouseClicked (e);
+        //this.mouseClicked (e);
     }
 
     @Override
     public void mouseMoved (MouseEvent e) {
         int x = e.getX(); int y = e.getY();
         Hexagon hexag = geometry.getHexagonByPosition(x, y);
-
         if (hexag != null) {
             if (
                 this.hovering != null && 

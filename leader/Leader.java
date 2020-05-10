@@ -2,6 +2,7 @@ package leader;
 
 import enums.PlayerType;
 import enums.PlayerIndex;
+import enums.LeaderCode;
 import logic.HexPlayer;
 import logic.HexGame;
 
@@ -24,10 +25,18 @@ public class Leader {
         hexgame = new HexGame(n, p1, p2);
     }
 
-    public static boolean playHuman (int i, int j) {
+    public static LeaderCode playHuman (int i, int j) {
         if (hexgame == null || !humanTurn()) 
-            return false;
-        return hexgame.playTurn(i, j);
+            return LeaderCode.MOVE_INVALID;
+        boolean isvalid = hexgame.playTurn(i, j);
+        if (!isvalid) 
+            return LeaderCode.MOVE_INVALID;
+        System.out.println("REPR");
+        hexgame.repr();
+        boolean haswon = hexgame.hasWon();
+        if (haswon) 
+            return LeaderCode.PLAYER_WON;
+        return LeaderCode.MOVE_VALID;
     }
 
     public static void playMachine () {
