@@ -29,6 +29,11 @@ public class HexGame {
         return false;
     }
 
+    public HexPlayer winner () {
+        if (this.hexlogic.winner == null) return null;
+        return this.playermap.get(this.hexlogic.winner);
+    }
+
     public boolean playTurn (int i, int j) {
         return this.playTurn (this.currentPlayer(), i, j);
     }
@@ -42,9 +47,13 @@ public class HexGame {
         return this.hexlogic.hasWon(p.index);
     }
     public boolean hasWon () {
-        return this.hexlogic.hasWon(
-            this.currentPlayer().index
-        );
+        PlayerIndex current = this.currentPlayer().index;
+        PlayerIndex last = PlayerIndex.PLAYER1;
+        switch (current) {
+            case PLAYER0: last = PlayerIndex.PLAYER1;
+            case PLAYER1: last = PlayerIndex.PLAYER0;
+        }
+        return this.hexlogic.hasWon(last);
     }
 
     public HexPlayer getWinner () {

@@ -4,26 +4,40 @@ import java.util.HashSet;
 import enums.PlayerType;
 import enums.PlayerIndex;
 import enums.LeaderCode;
+import enums.GameStatus;
 import logic.HexPlayer;
 import logic.HexGame;
+import geometry.HexFrame;
 
 public class Leader {
     public static int N;
-    
-    public static boolean humanTurn;
     public static HexGame hexgame;
+    public static HexFrame hexframe;
+    public static GameStatus status = GameStatus.VOID;
+
+    public static void newGame (
+        int n, HexPlayer p1, HexPlayer p2, HexFrame f
+    ) {
+        status = GameStatus.ACTIVE;
+        hexgame = new HexGame(n, p1, p2);
+        hexframe = f;
+    }
 
     public static boolean humanTurn () {
         if (hexgame == null) return false;
-        return hexgame.currentPlayer().type.equals(
-            PlayerType.HUMAN
-        );
+        HexPlayer currentPlayer = hexgame.currentPlayer();
+        if (currentPlayer == null) return false;
+        return currentPlayer.type.equals(PlayerType.HUMAN);
     }
 
-    public static void newGame (
-        int n, HexPlayer p1, HexPlayer p2
-    ) {
-        hexgame = new HexGame(n, p1, p2);
+    public static HexPlayer currentPlayer () {
+        if (hexgame == null) return null;
+        return hexgame.currentPlayer ();
+    }
+
+    public static HexPlayer winningPlayer () {
+        if (hexgame == null) return null;
+        return hexgame.winner();
     }
 
     public static HashSet<int[]> winningPath () {
@@ -38,8 +52,13 @@ public class Leader {
             return LeaderCode.MOVE_INVALID;
         hexgame.repr();
         boolean haswon = hexgame.hasWon();
-        if (haswon) 
+        System.out.println("HASWON" + haswon);
+        if (haswon) {
+            status = GameStatus.FINISHED;
+            hexframe.updateAll();
             return LeaderCode.PLAYER_WON;
+        }
+        hexframe.updateAll();
         return LeaderCode.MOVE_VALID;
     }
 

@@ -17,11 +17,11 @@ import geometry.Hexagon;
 public class HexPanel extends JPanel implements
     MouseListener, MouseMotionListener 
 {   
-    private static Color COLOR_EMPTY_EDGE = Color.WHITE;
-    private static Color COLOR_EMPTY_FILL = Color.BLACK;
-    private static Color COLOR_HOVER = new Color(15, 15, 15);
-    private static Color COLOR_PLAYER0 = Color.BLUE;
-    private static Color COLOR_PLAYER1 = Color.GREEN;
+    public static Color COLOR_EMPTY_EDGE = Color.WHITE;
+    public static Color COLOR_EMPTY_FILL = Color.BLACK;
+    public static Color COLOR_HOVER = new Color(15, 15, 15);
+    public static Color COLOR_PLAYER0 = new Color(255, 128, 0);
+    public static Color COLOR_PLAYER1 = new Color(0, 153, 152);
 
     private int n, width, height;
     private Hexagon hovering;
@@ -63,7 +63,7 @@ public class HexPanel extends JPanel implements
                 g.fillPolygon(hx);
                 g.setColor(
                     (hx.borderColor == null) ? 
-                    COLOR_EMPTY_FILL : hx.borderColor
+                    COLOR_EMPTY_EDGE : hx.borderColor
                 );
                 g.drawPolygon(hx);
             }
@@ -95,6 +95,7 @@ public class HexPanel extends JPanel implements
                 this.repaint();
                 break;
             case PLAYER_WON:
+                System.out.println("HERHER");
                 HashSet<int[]> path = Leader.winningPath();
                 if (path == null) return;
                 for (int[] cord : path) {
@@ -102,8 +103,9 @@ public class HexPanel extends JPanel implements
                         cord[0], cord[1]
                     );
                     if (hx != null)
-                        hx.borderColor = Color.YELLOW;
+                        hx.borderColor = Color.RED;
                 }
+                this.repaint();
                 break;
             case MOVE_INVALID:
                 System.out.println("Move Invalid");
