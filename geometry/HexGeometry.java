@@ -24,6 +24,12 @@ public class HexGeometry {
 	) {
 		this.boardSize = boardSize;
 		this.hexagonMatrix = new Hexagon[boardSize][boardSize];
+		for (int i = 0; i < boardSize; i++)
+			for (int j = 0; j < boardSize; j++)
+				this.hexagonMatrix[i][j] = new Hexagon (
+					new int[] {0, 0, 0, 0, 0, 0}, 
+					new int[] {0, 0, 0, 0, 0, 0}
+				);
 		updateDimensions(panelWidth, panelHeight);
 	}
 
@@ -35,7 +41,7 @@ public class HexGeometry {
 		calculateEdgeLenght();
 		calculateTriangleHeight();
 		calculateMargins();
-		setHexagonMatrix();
+		setHexagonPoints();
 	}
 
 	private void calculateEdgeLenght() {
@@ -46,6 +52,10 @@ public class HexGeometry {
 		/ (HexGeometry.SQRT3 * (3.0 * this.boardSize - 1) + 6), 
 			boardHeight
 		 / (3.0 * this.boardSize + 1) - 6);
+	}
+
+	private void calculateTriangleHeight() {
+		this.triangleHeight = HexGeometry.SQRT3 * this.hexagonEdge / 2;
 	}
 
 	private void calculateMargins() {
@@ -61,10 +71,6 @@ public class HexGeometry {
 		) / 2;
 	}
 
-	private void calculateTriangleHeight() {
-		this.triangleHeight = HexGeometry.SQRT3 * this.hexagonEdge / 2;
-	}
-
 	private int[][] centerToVertices(double x, double y) {
 		int[][] array = new int[2][6];
 		for (int i = 0; i < 6; i++) {
@@ -74,7 +80,7 @@ public class HexGeometry {
 		return array;
 	}
 	
-	private void setHexagonMatrix() {
+	private void setHexagonPoints() {
 		double width = this.marginX + this.triangleHeight;
 		double height = this.marginY + this.hexagonEdge;
 		double dwidth = this.triangleHeight;
@@ -83,7 +89,7 @@ public class HexGeometry {
 			double width1 = width;
 			for (int j = 0; j < this.boardSize; j++) {
 				int[][] hexvertices = centerToVertices(width1, height);
-				this.hexagonMatrix[i][j] = new Hexagon(
+				this.hexagonMatrix[i][j].resetPoints(
 					hexvertices[0], hexvertices[1]
 				);
 				width1 += 2 * this.triangleHeight;

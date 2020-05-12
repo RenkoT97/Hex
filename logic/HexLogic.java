@@ -17,10 +17,6 @@ public class HexLogic {
         {1, -1}, {1, 0}, {0, 1}, 
         {0, -1}, {-1, 1}, {-1, 0}
     };
-    private static HashMap<PlayerIndex, FieldType> indexToField = new HashMap<PlayerIndex, FieldType>() {{
-        put(PlayerIndex.PLAYER0, FieldType.TYPE0);
-        put(PlayerIndex.PLAYER1, FieldType.TYPE1);
-    }};
 
     public HexLogic (int n) {
         this.boardLength = this.n = n;

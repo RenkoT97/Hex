@@ -17,12 +17,12 @@ public class HexFrame extends JFrame implements
     ActionListener, ComponentListener 
 {
     private int height, width;
-    private HexPanel hexPanel;
     private JMenuBar options;
     private JMenu gameOptions;
     private JMenuItem gameSize, playerTypes, gameStart;
     private JLabel status;
 
+    public HexPanel hexPanel;
     public HexGame game;
     private int n;
     private HexPlayer player0, player1;
@@ -169,8 +169,14 @@ public class HexFrame extends JFrame implements
                 t1 = PlayerType.MACHINE;
                 t2 = PlayerType.MACHINE;
             } else return;
-            this.player0 = new HexPlayer(PlayerIndex.PLAYER0, t1);
-            this.player1 = new HexPlayer(PlayerIndex.PLAYER1, t2);
+            this.player0 = new HexPlayer(
+                PlayerIndex.PLAYER0, t1, 
+                HexPanel.COLOR_PLAYER0
+            );
+            this.player1 = new HexPlayer(
+                PlayerIndex.PLAYER1, t2,
+                HexPanel.COLOR_PLAYER1
+            );
         } else if (name.equals("Start Game")) {
             if (this.n > 0 && 
                 this.player0 != null &&

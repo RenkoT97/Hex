@@ -12,6 +12,7 @@ import enums.LeaderCode;
 import leader.Leader;
 import geometry.HexGeometry;
 import geometry.Hexagon;
+import logic.HexPlayer;
 
 @SuppressWarnings("serial")
 public class HexPanel extends JPanel implements
@@ -26,10 +27,8 @@ public class HexPanel extends JPanel implements
     private int n, width, height;
     private Hexagon hovering;
     private HexGeometry geometry;
-    private PlayerIndex currentPlayer;
 
     public HexPanel (int n, int width, int height) {
-        this.currentPlayer = PlayerIndex.PLAYER0;
         this.width = width;
         this.height = height;
         this.resetHexSize(n);
@@ -44,13 +43,31 @@ public class HexPanel extends JPanel implements
     }
 
     public void updateDimensions (int width, int height) {
-        this.height = height; this.width = width;
+        this.width = width; this.height = height;
         this.geometry.updateDimensions(width, height);
         this.repaint();
     }
 
     public Dimension getPrefferedDimension () {
         return new Dimension(this.width, this.height);
+    }
+
+    public void hexagonPlayed (int i, int j, HexPlayer p) {
+        Hexagon hex = this.geometry.getHexagonByIndex(i, j);
+        hex.color = p.color;
+        switch (p.index) {
+            case PLAYER0: hex.type = FieldType.TYPE0;
+            case PLAYER1: hex.type = FieldType.TYPE1;
+        }
+        this.repaint();
+    }
+
+    public void markWinningPath (HashSet<int[]> path) {
+        for (int[] ij : path) {
+            Hexagon hx = this.geometry.getHexagonByIndex(ij[0], ij[1]);
+            hx.color = Color.YELLOW;
+        }
+        this.repaint();
     }
 
     @Override
@@ -74,43 +91,7 @@ public class HexPanel extends JPanel implements
         int x = e.getX(); int y = e.getY();
         int[] ij = geometry.getIndexByPosition(x, y);
         if (ij == null) return;
-        LeaderCode status = Leader.playHuman (ij[0], ij[1]);
-        switch (status) {
-            case MOVE_VALID:
-                Hexagon hex = this.geometry.getHexagonByIndex(
-                    ij[0], ij[1]
-                );
-                switch (this.currentPlayer) {
-                    case PLAYER0: 
-                        hex.color = COLOR_PLAYER0;
-                        hex.type = FieldType.TYPE0;
-                        this.currentPlayer = PlayerIndex.PLAYER1;
-                        break;
-                    case PLAYER1:
-                        hex.color = COLOR_PLAYER1;
-                        hex.type = FieldType.TYPE1;
-                        this.currentPlayer = PlayerIndex.PLAYER0;
-                        break;
-                }
-                this.repaint();
-                break;
-            case PLAYER_WON:
-                System.out.println("HERHER");
-                HashSet<int[]> path = Leader.winningPath();
-                if (path == null) return;
-                for (int[] cord : path) {
-                    Hexagon hx = this.geometry.getHexagonByIndex(
-                        cord[0], cord[1]
-                    );
-                    if (hx != null)
-                        hx.borderColor = Color.RED;
-                }
-                this.repaint();
-                break;
-            case MOVE_INVALID:
-                System.out.println("Move Invalid");
-                break;
-        }  
+        Leader.playHuman (ij[0], ij[1]);
     }
 
     @Override
