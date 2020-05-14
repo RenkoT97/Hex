@@ -155,7 +155,7 @@ public class HexFrame extends JFrame implements
         if (name.equals("Game Size")) {
             int n = inputGameSize();
             this.resetHexSize (n);
-            Leader.status = GameStatus.VOID;
+            Leader.clearGame();
         } else if (name.equals("Player Types")) {
             String types = inputPlayerTypes();
             PlayerType t1, t2;
@@ -177,6 +177,7 @@ public class HexFrame extends JFrame implements
                 PlayerIndex.PLAYER1, t2,
                 HexPanel.COLOR_PLAYER1
             );
+            Leader.clearGame();
         } else if (name.equals("Start Game")) {
             if (this.n > 0 && 
                 this.player0 != null &&

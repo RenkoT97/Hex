@@ -22,7 +22,8 @@ public class HexPanel extends JPanel implements
     public static Color COLOR_EMPTY_FILL = Color.BLACK;
     public static Color COLOR_HOVER = new Color(15, 15, 15);
     public static Color COLOR_PLAYER0 = new Color(255, 128, 0);
-    public static Color COLOR_PLAYER1 = new Color(0, 153, 152);
+    public static Color COLOR_PLAYER1 = new Color(80, 168, 227);
+    public static Color COLOR_WINNING = new Color(255, 0, 0);
 
     private int n, width, height;
     private Hexagon hovering;
@@ -65,7 +66,7 @@ public class HexPanel extends JPanel implements
     public void markWinningPath (HashSet<int[]> path) {
         for (int[] ij : path) {
             Hexagon hx = this.geometry.getHexagonByIndex(ij[0], ij[1]);
-            hx.color = Color.YELLOW;
+            hx.borderColor = COLOR_WINNING;
         }
         this.repaint();
     }

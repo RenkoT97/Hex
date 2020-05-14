@@ -94,27 +94,31 @@ public class HexLogic {
         switch (this.winner) {
             case PLAYER0: 
                 for (int i = 0; i < n; i++) {
-                    HashSet<int[]> ret = getWinningPath(
-                        FieldType.TYPE0,
-                        new int[] {i, 0},
-                        new int[] {-1, n-1}
-                    );
-                    if (ret != null) return ret;
+                    if (this.board[0][i].equals(FieldType.TYPE0)) {
+                        HashSet<int[]> ret = pathDfs(
+                            FieldType.TYPE0,
+                            new int[] {0, i},
+                            new int[] {n-1, -1}
+                        );
+                        if (ret != null) return ret;
+                    }
                 }
             case PLAYER1: 
-            for (int i = 0; i < n; i++) {
-                HashSet<int[]> ret = getWinningPath(
-                    FieldType.TYPE1,
-                    new int[] {0, i},
-                    new int[] {n-1, -1}
-                );
-                if (ret != null) return ret;
-            }
+                for (int i = 0; i < n; i++) {
+                    if (this.board[i][0].equals(FieldType.TYPE1)) {     
+                        HashSet<int[]> ret = pathDfs(
+                            FieldType.TYPE1,
+                            new int[] {i, 0},
+                            new int[] {-1, n-1}
+                        );
+                        if (ret != null) return ret;
+                    }
+                }
         }
         return null;
     }
 
-    private HashSet<int[]> getWinningPath (
+    private HashSet<int[]> pathDfs (
         FieldType t, int[] source, int[] sink
     ) {
         boolean[][] marked = new boolean[n][n];

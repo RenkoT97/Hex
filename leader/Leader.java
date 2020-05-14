@@ -25,20 +25,25 @@ public class Leader {
         hexframe = f;
     }
 
+    public static void clearGame () {
+        hexgame = null;
+        status = GameStatus.VOID;
+    }
+
     public static boolean humanTurn () {
-        if (hexgame == null) return false;
+        if (!status.equals(GameStatus.ACTIVE)) return false;
         HexPlayer currentPlayer = hexgame.getCurrentPlayer();
         if (currentPlayer == null) return false;
         return currentPlayer.type.equals(PlayerType.HUMAN);
     }
 
     public static HexPlayer currentPlayer () {
-        if (hexgame == null) return null;
+        if (!status.equals(GameStatus.ACTIVE)) return null;
         return hexgame.getCurrentPlayer ();
     }
 
     public static HexPlayer winningPlayer () {
-        if (hexgame == null) return null;
+        if (!status.equals(GameStatus.ACTIVE)) return null;
         return hexgame.getWinner();
     }
 
@@ -47,7 +52,8 @@ public class Leader {
     }
 
     public static void playHuman (int i, int j) {
-        if (hexgame == null || !humanTurn()) return;
+        if (!status.equals(GameStatus.ACTIVE) || !humanTurn())
+            return;
         boolean isvalid = hexgame.playTurn(i, j);
         if (!isvalid) return;
         hexframe.hexPanel.hexagonPlayed(
@@ -57,6 +63,7 @@ public class Leader {
         if (haswon) {
             HashSet<int[]> path = winningPath();
             hexframe.hexPanel.markWinningPath(path);
+            status = GameStatus.FINISHED;
         }
     }
 
