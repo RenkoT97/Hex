@@ -1,11 +1,16 @@
 package logic;
+
+import java.util.Stack;
+import java.util.HashSet;
+import java.util.HashMap;
+
 import logic.HexUnionFind;
 import enums.FieldType;
 import enums.PlayerIndex;
 
 public class HexLogic {
     public int boardLength, boardSize, n;
-    public PlayerIndex currentPlayer;
+    public PlayerIndex currentPlayer, winner;
     private FieldType[][] board;
     private HexUnionFind uf;
     private static int[][] fieldRelations = {
@@ -53,20 +58,25 @@ public class HexLogic {
         this.joinComponentsAround(FieldType.TYPE1, i, j);
     }
 
-    public boolean makeMove(PlayerIndex player, int i, int j) {
-        if (!(
+    public boolean moveValid (PlayerIndex player, int i, int j) {
+        return (
             this.fieldAt(i, j).equals(FieldType.EMPTY) && 
             this.currentPlayer.equals(player)
-        )) return false;
+        );
+    }
+
+    public void makeMove(PlayerIndex player, int i, int j) {
         switch (player) {
             case PLAYER0: 
                 this.setFieldType0(i, j);
                 this.currentPlayer = PlayerIndex.PLAYER1;
+                break;
             case PLAYER1: 
                 this.setFieldType1(i, j);
                 this.currentPlayer = PlayerIndex.PLAYER0;
+                break;
         }
-        return true;
+        if (this.hasWon(player)) this.winner = player;
     }
 
     public boolean hasWon (PlayerIndex player) {
@@ -79,7 +89,72 @@ public class HexLogic {
         return false;
     }
 
-    public void repr (FieldType t) {
+    public HashSet<int[]> winningPath () {
+        if (this.winner == null) return null;
+        switch (this.winner) {
+            case PLAYER0: 
+                for (int i = 0; i < n; i++) {
+                    if (this.board[0][i].equals(FieldType.TYPE0)) {
+                        HashSet<int[]> ret = pathDfs(
+                            FieldType.TYPE0,
+                            new int[] {0, i},
+                            new int[] {n-1, -1}
+                        );
+                        if (ret != null) return ret;
+                    }
+                }
+            case PLAYER1: 
+                for (int i = 0; i < n; i++) {
+                    if (this.board[i][0].equals(FieldType.TYPE1)) {     
+                        HashSet<int[]> ret = pathDfs(
+                            FieldType.TYPE1,
+                            new int[] {i, 0},
+                            new int[] {-1, n-1}
+                        );
+                        if (ret != null) return ret;
+                    }
+                }
+        }
+        return null;
+    }
+
+    private HashSet<int[]> pathDfs (
+        FieldType t, int[] source, int[] sink
+    ) {
+        boolean[][] marked = new boolean[n][n];
+        for (int k = 0; k < n; k++) 
+            for (int l = 0; l < n; l++) 
+                marked[k][l] = false;
+        HashSet<int[]> path = new HashSet<int[]> ();
+        Stack<int[]> stack = new Stack<int[]> ();
+        stack.add(source);
+        while (!stack.empty()) {
+            source = stack.pop();
+            path.add(source);
+            int i = source[0]; 
+            int j = source[1];
+            if (!marked[i][j]) {
+                marked[i][j] = true;
+                if (sink[0] == i || sink[1] == j) return path;
+                for (int[] dij : HexLogic.fieldRelations) {
+                    int ti = i + dij[0];
+                    int tj = j + dij[1];
+                    if (ti >= 0 && ti < n && tj >= 0 && tj < n) {
+                        if (!marked[ti][tj] && this.board[ti][tj].equals(t))
+                            stack.push(new int[] {ti, tj});
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public void repr () {
+        this.uf.repr();
+        System.out.println("PLAYER 0 WON " + this.hasWon(PlayerIndex.PLAYER0));
+        System.out.println("PLAYER 1 WON " + this.hasWon(PlayerIndex.PLAYER1));
+
+        System.out.println("");
         for (int i = 0; i < this.boardLength; i++) {
             for (int j = 0; j < this.boardLength; j++) 
                 System.out.print(this.board[i][j].name());

@@ -1,12 +1,14 @@
 package logic;
 
 public class HexUnionFind {
+    private int n;
     private int[][][] structure;
     
     public HexUnionFind (int n) {
+        this.n = n;
         this.structure = new int[n+2][n+2][2];
         for (int i = 1; i < n + 1; i++)
-            for (int j = 0; j < n; j++) {
+            for (int j = 1; j < n + 1; j++) {
                 this.structure[i][j][0] = i;
                 this.structure[i][j][1] = j;
             }
@@ -14,7 +16,7 @@ public class HexUnionFind {
             this.structure[0][j] = new int[] {0, 1};
             this.structure[n+1][j] = new int[] {n+1, 1};
             this.structure[j][0] = new int[] {1, 0};
-            this.structure[j][n] = new int[] {1, n+1};
+            this.structure[j][n+1] = new int[] {1, n+1};
         }
     }
 
@@ -48,5 +50,15 @@ public class HexUnionFind {
         int[] sourceij = this.getSource(i+1, j+1);
         int[] sourcekl = this.getSource(k+1, l+1);
         return (sourceij[0] == sourcekl[0] && sourceij[1] == sourcekl[1]);
+    }
+
+    public void repr() {
+        for (int i = 0; i < n + 2; i++) {
+            for (int j = 0; j < n + 2; j++) {
+                int[] field = this.structure[i][j];
+                System.out.print(field[0] + " " + field[1] + "  ");
+            }
+            System.out.println("");
+        }
     }
 }

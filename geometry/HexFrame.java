@@ -7,86 +7,190 @@ import javax.swing.*;
 import geometry.HexPanel;
 import enums.PlayerIndex;
 import enums.PlayerType;
+import enums.GameStatus;
 import logic.HexPlayer;
 import logic.HexGame;
+import leader.Leader;
 
-public class HexFrame implements ActionListener, ComponentListener {
+@SuppressWarnings("serial")
+public class HexFrame extends JFrame implements 
+    ActionListener, ComponentListener 
+{
     private int height, width;
-    private HexPanel hexPanel;
-    private JFrame mainframe;
     private JMenuBar options;
     private JMenu gameOptions;
     private JMenuItem gameSize, playerTypes, gameStart;
+    private JLabel status;
 
+    public HexPanel hexPanel;
     public HexGame game;
     private int n;
-    private HexPlayer player1, player2;
+    private HexPlayer player0, player1;
 
     public HexFrame (int width, int height) {
         this.height = height; 
         this.width = width;
-        this.mainframe = new JFrame();
+
+        this.setTitle("Hex");
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setLayout(new GridBagLayout());
 
         this.options = new JMenuBar();
+        this.setJMenuBar(this.options);
         this.gameOptions = new JMenu("Game Settings");
+        this.options.add(gameOptions);
 
-        this.gameSize = new JMenuItem("gameSize");
+        this.gameSize = new JMenuItem("Game Size");
         this.gameOptions.add(gameSize);
         this.gameSize.addActionListener(this);
 
-        this.playerTypes = new JMenuItem("playertypes");
+        this.playerTypes = new JMenuItem("Player Types");
         this.gameOptions.add(playerTypes);
         this.playerTypes.addActionListener(this);
 
-        this.gameStart = new JMenuItem("startgame");
+        this.gameStart = new JMenuItem("Start Game");
         this.gameOptions.add(gameStart);
         this.gameStart.addActionListener(this);
 
-        this.options.add(gameOptions);
-        this.mainframe.add(this.options, BorderLayout.NORTH);
-        this.mainframe.addComponentListener(this);
-        this.mainframe.setSize(new Dimension(width, height));
-        this.mainframe.setVisible(true);
-        this.mainframe.setFocusable(true);
+        this.hexPanel = new HexPanel(n, width, height);
+        this.add(hexPanel);
+
+        GridBagConstraints frameLayout = new GridBagConstraints();
+		frameLayout.gridx = 0;
+		frameLayout.gridy = 0;
+		frameLayout.fill = GridBagConstraints.BOTH;
+		frameLayout.weightx = 1.0;
+		frameLayout.weighty = 1.0;
+		this.getContentPane().add(hexPanel, frameLayout);
+		
+		this.status = new JLabel();
+		this.status.setFont(new Font(
+            this.status.getFont().getName(),
+			this.status.getFont().getStyle(),
+            20
+        ));
+		GridBagConstraints statusLayout = new GridBagConstraints();
+		statusLayout.gridx = 0;
+		statusLayout.gridy = 1;
+		statusLayout.anchor = GridBagConstraints.CENTER;
+		this.getContentPane().add(
+            this.status, statusLayout
+        );
+	
+        this.updateStatus();
+        this.addComponentListener(this);
+        this.setSize(new Dimension(width, height));
+        this.setVisible(true);
+        this.setFocusable(true);
     }
 
-    private void newHex (int n) {
+    public void updateAll () {
+        this.updateStatus();
+    }
+
+    private void updateStatus () {
+        String build = "";
+        HexPlayer player;
+        switch (Leader.status) {
+            case ACTIVE: 
+                player = Leader.currentPlayer();
+                build = String.format(
+                    "Game Size: %d, Player Turn: %s",
+                    this.n, player.index.name()
+                );
+                break;
+            case FINISHED:
+                player = Leader.winningPlayer();
+                build = String.format(
+                    "Game Winner: %s",
+                    player.index.name()
+                );
+                break;
+            case VOID: 
+                build = String.format(
+                    "Game Size: %d, Game Type: %s vs %s",
+                    this.n, 
+                    (this.player0 == null) ? "NONE" : this.player0.type.name(), 
+                    (this.player1 == null) ? "NONE" : this.player1.type.name()
+                );
+        }
+        this.status.setText(build);
+    }
+
+    private void resetHexSize (int n) {
         this.n = n;
-        if (this.hexPanel == null) {
-            this.hexPanel = new HexPanel(n, width, height);
-            this.mainframe.add(hexPanel);
-        } else this.hexPanel.changeSize(n);
+        this.hexPanel.resetHexSize(n);
         this.hexPanel.setFocusable(true);
         this.hexPanel.setVisible(true);
         this.hexPanel.updateUI();
     }
 
-    private int grabInputNum (String title) {
+    private int inputGameSize () {
         return Integer.parseInt(
             JOptionPane.showInputDialog(
-                this.mainframe, title
+                this, "Select Game Size"
             )
+        );
+    }
+
+    private String inputPlayerTypes () {
+        String[] possibilities = {
+            "Human on Human", 
+            "Human on Machine", 
+            "Machine on Machine"
+        };
+        return (String) JOptionPane.showInputDialog(
+            this,
+            "Choose Player Types",
+            "Player Options",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            possibilities,
+            "Human on Human"
         );
     }
 
     public void actionPerformed (ActionEvent e) {
         String name = e.getActionCommand();
-        if (name.equals("gameSize")) {
-            int n = grabInputNum("Select Game Size");
-            this.newHex (n);
-        } else if (name.equals("playerTypes")) {
-            
-        } else if (name.equals("gamestart")) {
+        if (name.equals("Game Size")) {
+            int n = inputGameSize();
+            this.resetHexSize (n);
+            Leader.clearGame();
+        } else if (name.equals("Player Types")) {
+            String types = inputPlayerTypes();
+            PlayerType t1, t2;
+            if (types.equals("Human on Human")) {
+                t1 = PlayerType.HUMAN;
+                t2 = PlayerType.HUMAN;
+            } else if (types.equals("Human on Machine")) {
+                t1 = PlayerType.HUMAN;
+                t2 = PlayerType.MACHINE;
+            } else if (types.equals("Machine on Machine")) {
+                t1 = PlayerType.MACHINE;
+                t2 = PlayerType.MACHINE;
+            } else return;
+            this.player0 = new HexPlayer(
+                PlayerIndex.PLAYER0, t1, 
+                HexPanel.COLOR_PLAYER0
+            );
+            this.player1 = new HexPlayer(
+                PlayerIndex.PLAYER1, t2,
+                HexPanel.COLOR_PLAYER1
+            );
+            Leader.clearGame();
+        } else if (name.equals("Start Game")) {
             if (this.n > 0 && 
+                this.player0 != null &&
                 this.player1 != null &&
-                this.player2 != null
-            ) this.game = new HexGame (n, player1, player2);
+                this.game == null
+            ) Leader.newGame(n, player0, player1, this);
         }
+        updateStatus();
     }
 
     @Override
     public void componentResized(ComponentEvent e) {
-        Dimension d = this.mainframe.getSize();
+        Dimension d = this.getSize();
         this.width = d.width; this.height = d.height;
         if (this.hexPanel != null)
             this.hexPanel.updateDimensions(width, height);
