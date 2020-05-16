@@ -1,5 +1,5 @@
-import geometry.HexPanel.java;
-import geometry.HexFrame.java;
+import geometry.HexPanel;
+import geometry.HexFrame;
 
 
 public class HexApp {
