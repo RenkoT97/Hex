@@ -64,13 +64,13 @@ public class HexGeometry {
 	}
 
 	private void calculateEdgeLenght() {
-		double boardHeight = this.panelHeight -  5;
-		double boardWidth = this.panelWidth - 5;
+		double boardHeight = this.panelHeight;
+		double boardWidth = this.panelWidth;
 		this.hexagonEdge = 2 * Math.min(
 			boardWidth
-		/ (HexGeometry.SQRT3 * (3.0 * this.boardSize - 1) + 10), 
+		/ (HexGeometry.SQRT3 * (3.0 * this.boardSize - 1)), 
 			boardHeight
-		 / (3.0 * this.boardSize + 1)-6);
+		 / (3.0 * this.boardSize + 1));
 	}
 
 	private void calculateTriangleHeight() {
