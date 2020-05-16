@@ -7,7 +7,6 @@ import javax.swing.*;
 import geometry.HexPanel;
 import enums.PlayerIndex;
 import enums.PlayerType;
-import enums.GameStatus;
 import logic.HexPlayer;
 import logic.HexGame;
 import leader.Leader;
@@ -191,9 +190,12 @@ public class HexFrame extends JFrame implements
     @Override
     public void componentResized(ComponentEvent e) {
         Dimension d = this.getSize();
+        int labelHeight = this.status.getHeight();
         this.width = d.width; this.height = d.height;
         if (this.hexPanel != null)
-            this.hexPanel.updateDimensions(width, height);
+            this.hexPanel.updateDimensions(
+                width, height - labelHeight
+            );
     }
 
     @Override

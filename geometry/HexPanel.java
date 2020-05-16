@@ -7,8 +7,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import enums.FieldType;
-import enums.PlayerIndex;
-import enums.LeaderCode;
 import leader.Leader;
 import geometry.HexGeometry;
 import geometry.Hexagon;

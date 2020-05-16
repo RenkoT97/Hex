@@ -1,11 +1,8 @@
 package leader;
 
-import java.awt.Color;
 import java.util.HashSet;
 
 import enums.PlayerType;
-import enums.PlayerIndex;
-import enums.LeaderCode;
 import enums.GameStatus;
 import logic.HexPlayer;
 import logic.HexGame;

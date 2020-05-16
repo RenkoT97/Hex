@@ -2,7 +2,6 @@ package logic;
 
 import java.util.Stack;
 import java.util.HashSet;
-import java.util.HashMap;
 
 import logic.HexUnionFind;
 import enums.FieldType;
