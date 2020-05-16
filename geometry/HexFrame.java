@@ -75,7 +75,8 @@ public class HexFrame extends JFrame implements
 		this.getContentPane().add(
             this.status, statusLayout
         );
-	
+        
+        this.updateDimensions();
         this.updateStatus();
         this.addComponentListener(this);
         this.setSize(new Dimension(width, height));
@@ -182,20 +183,26 @@ public class HexFrame extends JFrame implements
                 this.player0 != null &&
                 this.player1 != null &&
                 this.game == null
-            ) Leader.newGame(n, player0, player1, this);
+            ) {
+                Leader.newGame(n, player0, player1, this);
+            }
         }
         updateStatus();
     }
 
+    private void updateDimensions() {
+        Dimension frameD = this.getSize();
+        this.width = frameD.width; 
+        this.height = frameD.height;
+        Dimension panelD = this.hexPanel.getSize();
+        this.hexPanel.updateDimensions(
+            panelD.width, panelD.height
+        );
+    }
+
     @Override
     public void componentResized(ComponentEvent e) {
-        Dimension d = this.getSize();
-        int labelHeight = this.status.getHeight();
-        this.width = d.width; this.height = d.height;
-        if (this.hexPanel != null)
-            this.hexPanel.updateDimensions(
-                width, height - labelHeight
-            );
+        this.updateDimensions();
     }
 
     @Override

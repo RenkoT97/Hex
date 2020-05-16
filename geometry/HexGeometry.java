@@ -37,7 +37,7 @@ public class HexGeometry {
 		double width, double height
 	) {
 		this.panelWidth = width;
-		this.panelHeight = height - 34.0;
+		this.panelHeight = height;
 		calculateEdgeLenght();
 		calculateTriangleHeight();
 		calculateMargins();
