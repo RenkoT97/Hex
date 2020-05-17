@@ -57,6 +57,10 @@ public class HexLogic {
         this.joinComponentsAround(FieldType.TYPE1, i, j);
     }
 
+    public boolean fieldEmpty (int i, int j) {
+        return this.fieldAt(i, j).equals(FieldType.EMPTY);
+    }
+
     public boolean moveValid (PlayerIndex player, int i, int j) {
         return (
             this.fieldAt(i, j).equals(FieldType.EMPTY) && 

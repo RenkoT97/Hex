@@ -1,6 +1,10 @@
 package leader;
 
 import java.util.HashSet;
+import java.util.Random;
+
+import javax.swing.SwingWorker;
+import java.util.concurrent.TimeUnit;
 
 import enums.PlayerType;
 import enums.GameStatus;
@@ -13,6 +17,7 @@ public class Leader {
     public static HexGame hexgame;
     public static HexFrame hexframe;
     public static GameStatus status = GameStatus.VOID;
+    private static Random gen = new Random();
 
     public static void newGame (
         int n, HexPlayer p1, HexPlayer p2, HexFrame f
@@ -20,6 +25,9 @@ public class Leader {
         status = GameStatus.ACTIVE;
         hexgame = new HexGame(n, p1, p2);
         hexframe = f;
+        HexPlayer current = hexgame.getCurrentPlayer();
+        if (current.type.equals(PlayerType.MACHINE))
+            playMachine();
     }
 
     public static void clearGame () {
@@ -40,7 +48,7 @@ public class Leader {
     }
 
     public static HexPlayer winningPlayer () {
-        if (!status.equals(GameStatus.ACTIVE)) return null;
+        if (!status.equals(GameStatus.FINISHED)) return null;
         return hexgame.getWinner();
     }
 
@@ -48,23 +56,56 @@ public class Leader {
         return hexgame.getWinningPath();
     }
 
-    public static void playHuman (int i, int j) {
-        if (!status.equals(GameStatus.ACTIVE) || !humanTurn())
-            return;
+    public static void playBase (int i, int j) {
+        if (!status.equals(GameStatus.ACTIVE)) return;
         boolean isvalid = hexgame.playTurn(i, j);
         if (!isvalid) return;
-        hexframe.hexPanel.hexagonPlayed(
-            i, j, hexgame.getLastPlayer()
-        );
+        HexPlayer recent = hexgame.getLastPlayer();
+        HexPlayer current = hexgame.getCurrentPlayer();
+        hexframe.hexPanel.hexagonPlayed(i, j, recent);
         boolean haswon = hexgame.hasWon();
+        hexframe.updateAll();
         if (haswon) {
             HashSet<int[]> path = winningPath();
             hexframe.hexPanel.markWinningPath(path);
             status = GameStatus.FINISHED;
-        }
+            hexframe.updateAll();
+        } else if (current.type.equals(PlayerType.MACHINE))
+            playMachine();
+        
+    }
+
+    public static void playHuman (int i, int j) {
+        if (!humanTurn()) return;
+        playBase(i, j);
     }
 
     public static void playMachine () {
-        System.out.println("Not Implemeneted");
+		SwingWorker<int[], Void> worker = new SwingWorker<int[], Void> () {
+			@Override
+			protected int[] doInBackground() {
+                int[] poteza = getMachineMove();
+                try {TimeUnit.SECONDS.sleep(2);} 
+                catch (Exception e) {};
+				return poteza;
+			}
+			@Override
+			protected void done () {
+				int[] poteza = null;
+                try {poteza = get();} catch (Exception e) {};
+                playBase(poteza[0], poteza[1]);
+			}
+		};
+		worker.execute();
+    }
+    
+    public static int[] getMachineMove () {
+        HashSet<int[]> valid = hexgame.getPossibleMoves();
+        int index = gen.nextInt(valid.size());
+        for (int[] coords : valid) {
+            if (index == 0) return coords;
+            index--;
+        }
+        return null;
     }
 }

@@ -42,6 +42,8 @@ public class HexGeometry {
 		calculateTriangleHeight();
 		calculateMargins();
 		setHexagonPoints();
+
+		/*
 		System.out.println("ZAČETEK");
 		System.out.println("marginX:");
 		System.out.println(this.marginX);
@@ -61,6 +63,7 @@ public class HexGeometry {
 		System.out.println(this.triangleHeight * (3*this.boardSize - 1));
 		System.out.println("Visina plosce:");
 		System.out.println(this.hexagonEdge * (3*this.boardSize + 1) / 2);
+		*/
 	}
 
 	private void calculateEdgeLenght() {

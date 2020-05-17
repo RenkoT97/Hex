@@ -95,8 +95,8 @@ public class HexFrame extends JFrame implements
             case ACTIVE: 
                 player = Leader.currentPlayer();
                 build = String.format(
-                    "Game Size: %d, Player Turn: %s",
-                    this.n, player.index.name()
+                    "Player Turn: %s",
+                    player.index.name()
                 );
                 break;
             case FINISHED:
@@ -108,8 +108,7 @@ public class HexFrame extends JFrame implements
                 break;
             case VOID: 
                 build = String.format(
-                    "Game Size: %d, Game Type: %s vs %s",
-                    this.n, 
+                    "Game Type: %s vs %s",
                     (this.player0 == null) ? "NONE" : this.player0.type.name(), 
                     (this.player1 == null) ? "NONE" : this.player1.type.name()
                 );
@@ -137,6 +136,7 @@ public class HexFrame extends JFrame implements
         String[] possibilities = {
             "Human on Human", 
             "Human on Machine", 
+            "Machine on Human",
             "Machine on Machine"
         };
         return (String) JOptionPane.showInputDialog(
@@ -165,6 +165,9 @@ public class HexFrame extends JFrame implements
             } else if (types.equals("Human on Machine")) {
                 t1 = PlayerType.HUMAN;
                 t2 = PlayerType.MACHINE;
+            } else if (types.equals("Machine on Human")) {
+                t1 = PlayerType.MACHINE;
+                t2 = PlayerType.HUMAN;
             } else if (types.equals("Machine on Machine")) {
                 t1 = PlayerType.MACHINE;
                 t2 = PlayerType.MACHINE;
@@ -183,9 +186,7 @@ public class HexFrame extends JFrame implements
                 this.player0 != null &&
                 this.player1 != null &&
                 this.game == null
-            ) {
-                Leader.newGame(n, player0, player1, this);
-            }
+            ) Leader.newGame(n, player0, player1, this);
         }
         updateStatus();
     }
