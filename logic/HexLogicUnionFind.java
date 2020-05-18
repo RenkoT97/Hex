@@ -7,19 +7,19 @@ import logic.HexUnionFind;
 import enums.FieldType;
 import enums.PlayerIndex;
 
-public class HexLogic {
-    public int boardLength, boardSize, n;
+public class HexLogicUnionFind {
+    public int boardLength, n;
     public PlayerIndex currentPlayer, winner;
     private FieldType[][] board;
     private HexUnionFind uf;
+    private int[] lastMove;
     private static int[][] fieldRelations = {
         {1, -1}, {1, 0}, {0, 1}, 
         {0, -1}, {-1, 1}, {-1, 0}
     };
 
-    public HexLogic (int n) {
+    public HexLogicUnionFind (int n) {
         this.boardLength = this.n = n;
-        this.boardSize = n * n;
         this.currentPlayer = PlayerIndex.PLAYER0;
         this.uf = new HexUnionFind(n);
         this.board = new FieldType[n][n];
@@ -36,7 +36,7 @@ public class HexLogic {
     }
 
     private void joinComponentsAround(FieldType t, int i, int j) {
-        for (int[] dij : HexLogic.fieldRelations) {
+        for (int[] dij : HexLogicUnionFind.fieldRelations) {
             int di = i + dij[0]; int dj = j + dij[1];
             if (this.fieldAt(di, dj).equals(t))
                 this.uf.joinComponents(i, j, di, dj);
@@ -79,50 +79,39 @@ public class HexLogic {
                 this.currentPlayer = PlayerIndex.PLAYER0;
                 break;
         }
-        if (this.hasWon(player)) this.winner = player;
+        lastMove = new int[] {i, j};
     }
 
     public boolean hasWon (PlayerIndex player) {
         switch (player) {
             case PLAYER0: 
-                return this.uf.inSameComponent(-1,0,n,0);
+                if (this.uf.inSameComponent(-1,0,n,0)) {
+                    this.winner = player;
+                    return true;
+                }
             case PLAYER1: 
-                return this.uf.inSameComponent(0,-1,0,n);
+                if (this.uf.inSameComponent(0,-1,0,n)) {
+                    this.winner = player;
+                    return true;
+                }
         }
         return false;
     }
-
     public HashSet<int[]> winningPath () {
-        if (this.winner == null) return null;
+        FieldType type = null;
         switch (this.winner) {
             case PLAYER0: 
-                for (int i = 0; i < n; i++) {
-                    if (this.board[0][i].equals(FieldType.TYPE0)) {
-                        HashSet<int[]> ret = pathDfs(
-                            FieldType.TYPE0,
-                            new int[] {0, i},
-                            new int[] {n-1, -1}
-                        );
-                        if (ret != null) return ret;
-                    }
-                }
+                type = FieldType.TYPE0;
+                break;
             case PLAYER1: 
-                for (int i = 0; i < n; i++) {
-                    if (this.board[i][0].equals(FieldType.TYPE1)) {     
-                        HashSet<int[]> ret = pathDfs(
-                            FieldType.TYPE1,
-                            new int[] {i, 0},
-                            new int[] {-1, n-1}
-                        );
-                        if (ret != null) return ret;
-                    }
-                }
+                type = FieldType.TYPE1;
+                break;
         }
-        return null;
+        return pathDfs(type, lastMove);
     }
 
     private HashSet<int[]> pathDfs (
-        FieldType t, int[] source, int[] sink
+        FieldType t, int[] source
     ) {
         boolean[][] marked = new boolean[n][n];
         for (int k = 0; k < n; k++) 
@@ -138,8 +127,7 @@ public class HexLogic {
             int j = source[1];
             if (!marked[i][j]) {
                 marked[i][j] = true;
-                if (sink[0] == i || sink[1] == j) return path;
-                for (int[] dij : HexLogic.fieldRelations) {
+                for (int[] dij : HexLogicUnionFind.fieldRelations) {
                     int ti = i + dij[0];
                     int tj = j + dij[1];
                     if (ti >= 0 && ti < n && tj >= 0 && tj < n) {
@@ -149,15 +137,10 @@ public class HexLogic {
                 }
             }
         }
-        return null;
+        return path;
     }
 
     public void repr () {
-        this.uf.repr();
-        System.out.println("PLAYER 0 WON " + this.hasWon(PlayerIndex.PLAYER0));
-        System.out.println("PLAYER 1 WON " + this.hasWon(PlayerIndex.PLAYER1));
-
-        System.out.println("");
         for (int i = 0; i < this.boardLength; i++) {
             for (int j = 0; j < this.boardLength; j++) 
                 System.out.print(this.board[i][j].name());
