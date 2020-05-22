@@ -44,6 +44,10 @@ public class HexGame {
         );
     }
 
+    public void reverseMove () {
+        this.hexlogic.reverseMove();
+    }
+
     public HexPlayer getLastPlayer () {
         PlayerIndex last = null;
         HexPlayer current = this.getCurrentPlayer();
