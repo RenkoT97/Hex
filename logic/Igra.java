@@ -1,20 +1,16 @@
 package logic;
 
-import logic.HexPlayer;
 import logic.HexGame;
 import splosno.Koordinati;
 
 public class Igra extends HexGame {
-    private static HexPlayer nullPlayer = new HexPlayer(
-        null, null, null
-    );
 
     public Igra (int n) {
-        super(n, nullPlayer, nullPlayer);
+        super(n);
     }
 
     public Igra () {
-        super(11, nullPlayer, nullPlayer);
+        this(11);
     }
 
     public boolean odigraj (Koordinati t) {

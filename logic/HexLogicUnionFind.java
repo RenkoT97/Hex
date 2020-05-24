@@ -13,7 +13,7 @@ public class HexLogicUnionFind {
     private FieldType[][] board;
     private HexUnionFind uf;
     private int[] lastMove;
-    private static int[][] fieldRelations = {
+    public static int[][] fieldRelations = {
         {1, -1}, {1, 0}, {0, 1}, 
         {0, -1}, {-1, 1}, {-1, 0}
     };

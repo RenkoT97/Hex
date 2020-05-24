@@ -13,7 +13,7 @@ public class HexLogicDfs {
     public PlayerIndex currentPlayer, winner;
     private FieldType[][] board;
     private Stack<int[]> placementStack;
-    private static int[][] fieldRelations = {
+    public static int[][] fieldRelations = {
         {1, -1}, {1, 0}, {0, 1}, 
         {0, -1}, {-1, 1}, {-1, 0}
     };
@@ -32,7 +32,7 @@ public class HexLogicDfs {
                 this.board[i][j] = FieldType.EMPTY;
     }
 
-    private FieldType fieldAt (int i, int j) {
+    public FieldType fieldAt (int i, int j) {
         if (i >= 0 && i < this.boardLength && 
             j >= 0  && j < this.boardLength
         ) return this.board[i][j];

@@ -13,6 +13,12 @@ public class HexGame {
     public int n;
     private HexLogicDfs hexlogic;
     public HashMap<PlayerIndex, HexPlayer> playermap;
+    private static HexPlayer defaultP0 = new HexPlayer(
+        PlayerIndex.PLAYER0, null, null
+    );
+    private static HexPlayer defaultP1 = new HexPlayer(
+        PlayerIndex.PLAYER1, null, null
+    );
 
     public HexGame(int n, HexPlayer p0, HexPlayer p1) {
         this.n = n;
@@ -20,6 +26,10 @@ public class HexGame {
         this.playermap = new HashMap<PlayerIndex, HexPlayer>();
         this.playermap.put(PlayerIndex.PLAYER0, p0);
         this.playermap.put(PlayerIndex.PLAYER1, p1);
+    }
+
+    public HexGame(int n) {
+        this(n, defaultP0, defaultP1);
     }
 
     public boolean playTurn (HexPlayer p, int i, int j) {
@@ -81,6 +91,10 @@ public class HexGame {
                 if (this.hexlogic.fieldEmpty(i, j)) 
                     pos.add(new int[] {i, j});
         return pos;
+    }
+
+    public HexLogicDfs getLogic () {
+        return this.hexlogic;
     }
 
     public void repr() {
