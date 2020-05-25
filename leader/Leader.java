@@ -88,7 +88,7 @@ public class Leader {
 			@Override
 			protected int[] doInBackground() {
                 int[] poteza = getMachineMove();
-                try {TimeUnit.SECONDS.sleep(2);} 
+                try {TimeUnit.SECONDS.sleep(1);} 
                 catch (Exception e) {};
 				return poteza;
 			}
@@ -103,9 +103,10 @@ public class Leader {
     }
     
     public static int[] getMachineMove () {
-        int[] move = tools.getBestMove(
+        int[] move = tools.getBestMoveAdvanced(
             hexgame.getCurrentPlayer()
         );
+        if (move == null) System.out.println("bad juju");
         return move;
     }
 }

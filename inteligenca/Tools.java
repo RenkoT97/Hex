@@ -1,14 +1,14 @@
 package inteligenca;
 
-import enums.PlayerIndex;
 import enums.FieldType;
+import enums.PlayerIndex;
 
 import java.util.Deque;
 import java.util.LinkedList;
 
 import logic.HexPlayer;
-import logic.HexGame;
 import logic.HexLogicDfs;
+
 
 public class Tools {
     private int n;
@@ -20,18 +20,29 @@ public class Tools {
         this.n = logic.n;
     }
 
-    public int[] getBestMove (HexPlayer p) {
-        FieldType type = null;
-        switch (p.index) {
-            case PLAYER0: type = FieldType.TYPE0; break;
-            case PLAYER1: type = FieldType.TYPE1; break;
+    private PlayerIndex otherPlayerIndex (PlayerIndex p) {
+        switch (p) {
+            case PLAYER0: return PlayerIndex.PLAYER1;
+            case PLAYER1: return PlayerIndex.PLAYER0;
         }
+        return null;
+    }
+
+    private FieldType playerIndexToFieldType(PlayerIndex i) {
+        switch (i) {
+            case PLAYER0: return FieldType.TYPE0;
+            case PLAYER1: return FieldType.TYPE1;
+        }
+        return null;
+    }
+
+    public int[] getBestMove (FieldType type) {
         int minpath = n*n;
         int[] minpos = new int[] {-1, -1};
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++) {
                 if (logic.fieldEmpty(i, j)) {
-                    int rank = pathDistanceSimple(i, j, type);
+                    int rank = pathDistance(i, j, type);
                     if (rank != -1 && rank < minpath) {
                         minpath = rank;
                         minpos = new int[] {i, j};
@@ -39,6 +50,46 @@ public class Tools {
                 }
             }
         return minpos;
+    }
+
+    public int[] getBestMoveAdvanced (HexPlayer p) {
+        int best_rank = -n * n - 3;
+        int[] best_argmax = new int[] {-1, -1};
+
+        PlayerIndex other = otherPlayerIndex(p.index);
+        FieldType other_type = playerIndexToFieldType(other);
+        FieldType this_type = playerIndexToFieldType(p.index);
+        
+        int[] other_repr = getBestMove(other_type);
+        // pathDistance ze zracuna path v procesu
+        int other_default_rank = pathDistanceProof(
+            other_repr[0], other_repr[1], other_type
+        );
+        boolean[][] path = shortestPath(
+            other_repr[0], other_repr[1], other_type
+        );
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (logic.fieldEmpty(i, j)) {
+                    int rank;
+                    int this_rank = pathDistanceProof(i, j, this_type);
+                    if (path[i][j] && !(other_repr[0] == i && other_repr[1] == j)) {
+                        logic.makeMove(p.index, i, j);
+                        int other_rank = pathDistanceProof(
+                            other_repr[0], other_repr[1], other_type
+                        );
+                        logic.reverseMove();
+                        rank = other_rank - this_rank;
+                    } else rank = other_default_rank - this_rank;
+                    if (rank > best_rank) {
+                        best_rank = rank;
+                        best_argmax = new int[] {i, j};
+                    }
+                }
+            }
+        }
+        return (best_rank != -n*n- 3) ? best_argmax : null;
     }
 
     private int[][] distanceList () {
@@ -65,7 +116,7 @@ public class Tools {
         return pointer;
     }
 
-    public int pathDistance (int s, int t, FieldType type) {
+    public boolean[][] shortestPath (int s, int t, FieldType type) {
         int index = (type.equals(FieldType.TYPE0)) ? 0 : 1;
         int[][] marked = markedList();
         int[][][] pointer = pointerList();
@@ -102,12 +153,12 @@ public class Tools {
                 }
             }    
         }
-        if (source[0] == -1 || sink[0] == -1) return -1;
-        int pathlen = 0;
+        if (source[0] == -1 || sink[0] == -1) return null;
+        boolean[][] onpath = new boolean[n][n];
         int[] ij = source.clone();
         while (ij[0] != s || ij[1] != t) {
             int i = ij[0]; int j = ij[1];
-            if (marked[i][j] == 0) pathlen++;
+            if (marked[i][j] == 0) onpath[i][j] = true;
             marked[i][j] = -2;
             ij = pointer[i][j].clone();
         }
@@ -115,13 +166,26 @@ public class Tools {
         while (ij[0] != s || ij[1] != t) {
             int i = ij[0]; int j = ij[1];
             boolean wasCounted = (marked[i][j] == -2);
-            if (!wasCounted && marked[i][j] == 0) pathlen++;
+            if (!wasCounted && marked[i][j] == 0) onpath[i][j] = true;
             ij = pointer[i][j].clone();
         }
-        return pathlen;
+        return onpath;
     } 
 
-    public int pathDistanceSimple (int s, int t, FieldType type) {
+    public int pathDistanceProof (int s, int t, FieldType type) {
+        boolean[][] mat = shortestPath (s, t, type);
+        if (mat == null) return n*n;
+        int dist = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (mat[i][j]) dist++;
+            }
+        }
+        return dist;
+    }
+
+    // this is an approximation (could be off in rare cases)
+    public int pathDistance (int s, int t, FieldType type) {
         int index = (type.equals(FieldType.TYPE0)) ? 0 : 1;
         int[][] distance = distanceList();
         Deque<int[]> dq = new LinkedList<int[]> ();
