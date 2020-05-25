@@ -12,12 +12,14 @@ import logic.HexPlayer;
 import logic.HexGame;
 import geometry.HexFrame;
 
+import inteligenca.Tools;
+
 public class Leader {
     public static int N;
     public static HexGame hexgame;
+    public static Tools tools;
     public static HexFrame hexframe;
     public static GameStatus status = GameStatus.VOID;
-    private static Random gen = new Random();
 
     public static void newGame (
         int n, HexPlayer p1, HexPlayer p2, HexFrame f
@@ -25,6 +27,7 @@ public class Leader {
         status = GameStatus.ACTIVE;
         hexgame = new HexGame(n, p1, p2);
         hexframe = f;
+        tools = new Tools(hexgame.getLogic());
         HexPlayer current = hexgame.getCurrentPlayer();
         if (current.type.equals(PlayerType.MACHINE))
             playMachine();
@@ -63,7 +66,7 @@ public class Leader {
         HexPlayer recent = hexgame.getLastPlayer();
         HexPlayer current = hexgame.getCurrentPlayer();
         hexframe.hexPanel.hexagonPlayed(i, j, recent);
-        boolean haswon = hexgame.hasWon();
+        boolean haswon = hexgame.hasWon(recent);
         hexframe.updateAll();
         if (haswon) {
             HashSet<int[]> path = winningPath();
@@ -100,12 +103,9 @@ public class Leader {
     }
     
     public static int[] getMachineMove () {
-        HashSet<int[]> valid = hexgame.getPossibleMoves();
-        int index = gen.nextInt(valid.size());
-        for (int[] coords : valid) {
-            if (index == 0) return coords;
-            index--;
-        }
-        return null;
+        int[] move = tools.getBestMove(
+            hexgame.getCurrentPlayer()
+        );
+        return move;
     }
 }

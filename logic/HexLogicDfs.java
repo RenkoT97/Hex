@@ -74,13 +74,13 @@ public class HexLogicDfs {
     }
 
     public boolean hasWon (PlayerIndex player) {
-        FieldType fieldt = indexToField.get(this.currentPlayer);
+        FieldType fieldt = indexToField.get(player);
         HashSet<int[]> path = pathDfs(
             fieldt, this.placementStack.lastElement()
         );
         boolean source = false;
         boolean sink = false;
-        int index = (fieldt.equals(FieldType.TYPE0)) ? 1 : 0;
+        int index = (fieldt.equals(FieldType.TYPE0)) ? 0 : 1;
         for (int[] ij : path) {
             if (ij[index] == 0) source = true;
             if (ij[index] == n - 1) sink = true;
