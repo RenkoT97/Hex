@@ -8,12 +8,15 @@ import javax.swing.SwingWorker;
 import java.util.concurrent.TimeUnit;
 
 import enums.PlayerType;
+import enums.PlayerIndex;
 import enums.GameStatus;
 import logic.HexPlayer;
 import logic.HexGame;
+import logic.HexLogicUnionFind;
 import geometry.HexFrame;
 
 import inteligenca.Tools;
+import inteligenca.Alphabeta;
 
 public class Leader {
     public static int N;
@@ -88,7 +91,7 @@ public class Leader {
 		SwingWorker<int[], Void> worker = new SwingWorker<int[], Void> () {
 			@Override
 			protected int[] doInBackground() {
-                int[] poteza = getMachineMove();
+                int[] poteza = getMachineMove(5, 3);
                 try {TimeUnit.SECONDS.sleep(1);} 
                 catch (Exception e) {};
 				return poteza;
@@ -103,12 +106,21 @@ public class Leader {
 		worker.execute();
     }
     
-    public static int[] getMachineMove () {
-        ArrayList<int[]> moves = tools.getBestMoves(
-            hexgame.getCurrentPlayer(), 1
-        );
-        if (moves.size() == 0) System.out.println("bad juju");
-        int[] move = new int[] {moves.get(0)[1], moves.get(0)[2]};
+    public static int[] getMachineMove (int k, int depth) {
+        PlayerIndex p = logic.currentPlayer;
+        int n = leader.Leader.hexgame.n;
+        ArrayList<int[]> arrayl = tools.getBestMoves(p, k);
+        int d = arrayl.size();
+        double max = Double.NEGATIVE_INFINITY;
+        int ind = 0;
+        for (int i = 0; i < d; i++) {
+            double value = alphabeta(depth, arrayl.get(i)[1], arrayl.get(i)[2], p, p, n, k);
+            if (value > max) {
+                max = value;
+                ind = i;
+            }
+        }
+        int[] move = new int[] {arrayl.get(ind)[1], arrayl.get(ind)[2]};
         return move;
     }
 }
