@@ -1,10 +1,12 @@
 package inteligenca;
 
+import java.util.LinkedList;
+import java.util.Stack;
+import java.util.Deque;
+import java.util.ArrayList;
+
 import enums.FieldType;
 import enums.PlayerIndex;
-
-import java.util.Deque;
-import java.util.LinkedList;
 
 import logic.HexPlayer;
 import logic.HexLogicDfs;
@@ -37,8 +39,8 @@ public class Tools {
     }
 
     public int[] getBestMove (FieldType type) {
-        int minpath = n*n;
-        int[] minpos = new int[] {-1, -1};
+        int minpath = n*n*n*n;
+        int[] minpos = new int[] {0,0};
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++) {
                 if (logic.fieldEmpty(i, j)) {
@@ -52,9 +54,22 @@ public class Tools {
         return minpos;
     }
 
-    public int[] getBestMoveAdvanced (HexPlayer p) {
-        int best_rank = -n * n - 3;
-        int[] best_argmax = new int[] {-1, -1};
+    private int[] minListRank (ArrayList<int[]> list) {
+        int mn = n * n * n *n;
+        int mnindex = 0;
+        int i = 0;
+        for (int[] elt : list) {
+            if (elt[0] < mn) {
+                mn = elt[0];
+                mnindex = i;
+            }
+            i++;
+        }
+        return new int[] {mnindex, mn};
+    }
+
+    public ArrayList<int[]> getBestMoves (HexPlayer p, int k) {
+        ArrayList<int[]> taken = new ArrayList<int[]> ();
 
         PlayerIndex other = otherPlayerIndex(p.index);
         FieldType other_type = playerIndexToFieldType(other);
@@ -62,7 +77,7 @@ public class Tools {
         
         int[] other_repr = getBestMove(other_type);
         // pathDistance ze zracuna path v procesu
-        int other_default_rank = pathDistanceProof(
+        int other_default_rank = pathDistance(
             other_repr[0], other_repr[1], other_type
         );
         boolean[][] path = shortestPath(
@@ -73,23 +88,34 @@ public class Tools {
             for (int j = 0; j < n; j++) {
                 if (logic.fieldEmpty(i, j)) {
                     int rank;
-                    int this_rank = pathDistanceProof(i, j, this_type);
-                    if (path[i][j] && !(other_repr[0] == i && other_repr[1] == j)) {
+                    int this_rank = pathDistance(i, j, this_type);
+                    if (this_rank == 0) rank = n*n; // winning pos
+                    else if (path[i][j]) {
                         logic.makeMove(p.index, i, j);
-                        int other_rank = pathDistanceProof(
-                            other_repr[0], other_repr[1], other_type
+                        int[] other_repr_t = getBestMove(other_type);
+                        int other_rank = pathDistance(
+                            other_repr_t[0], other_repr_t[1], other_type
                         );
                         logic.reverseMove();
-                        rank = other_rank - this_rank;
-                    } else rank = other_default_rank - this_rank;
-                    if (rank > best_rank) {
-                        best_rank = rank;
-                        best_argmax = new int[] {i, j};
+                        rank = (other_rank == -1) ? n * n : 5*other_rank - this_rank;
+                    } else rank = 5*other_default_rank - this_rank;
+
+                    System.out.println(taken.size());
+                    if (taken.size() < k) {
+                        taken.add(new int[] {rank, i, j});
+                    }
+                    else {
+                        int[] temp = minListRank(taken);
+                        if (rank > temp[1]) {
+                            taken.remove(temp[0]);
+                            taken.add(new int[] {rank, i, j});
+                        }
+
                     }
                 }
             }
         }
-        return (best_rank != -n*n- 3) ? best_argmax : null;
+        return taken;
     }
 
     private int[][] distanceList () {
@@ -174,13 +200,11 @@ public class Tools {
 
     public int pathDistanceProof (int s, int t, FieldType type) {
         boolean[][] mat = shortestPath (s, t, type);
-        if (mat == null) return n*n;
+        if (mat == null) return -1;
         int dist = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
                 if (mat[i][j]) dist++;
-            }
-        }
         return dist;
     }
 

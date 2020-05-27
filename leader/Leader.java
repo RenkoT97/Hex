@@ -1,5 +1,6 @@
 package leader;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -103,10 +104,11 @@ public class Leader {
     }
     
     public static int[] getMachineMove () {
-        int[] move = tools.getBestMoveAdvanced(
-            hexgame.getCurrentPlayer()
+        ArrayList<int[]> moves = tools.getBestMoves(
+            hexgame.getCurrentPlayer(), 1
         );
-        if (move == null) System.out.println("bad juju");
+        if (moves.size() == 0) System.out.println("bad juju");
+        int[] move = new int[] {moves.get(0)[1], moves.get(0)[2]};
         return move;
     }
 }
