@@ -1,7 +1,6 @@
 package inteligenca;
 
 import java.util.LinkedList;
-import java.util.Stack;
 import java.util.Deque;
 import java.util.ArrayList;
 
@@ -68,12 +67,12 @@ public class Tools {
         return new int[] {mnindex, mn};
     }
 
-    public ArrayList<int[]> getBestMoves (HexPlayer p, int k) {
+    public ArrayList<int[]> getBestMoves (PlayerIndex p, int k) {
         ArrayList<int[]> taken = new ArrayList<int[]> ();
 
-        PlayerIndex other = otherPlayerIndex(p.index);
+        PlayerIndex other = otherPlayerIndex(p);
         FieldType other_type = playerIndexToFieldType(other);
-        FieldType this_type = playerIndexToFieldType(p.index);
+        FieldType this_type = playerIndexToFieldType(p);
         
         int[] other_repr = getBestMove(other_type);
         // pathDistance ze zracuna path v procesu
@@ -91,7 +90,7 @@ public class Tools {
                     int this_rank = pathDistance(i, j, this_type);
                     if (this_rank == 0) rank = n*n; // winning pos
                     else if (path[i][j]) {
-                        logic.makeMove(p.index, i, j);
+                        logic.makeMove(p, i, j);
                         int[] other_repr_t = getBestMove(other_type);
                         int other_rank = pathDistance(
                             other_repr_t[0], other_repr_t[1], other_type
