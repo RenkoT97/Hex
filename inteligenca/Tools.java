@@ -96,10 +96,8 @@ public class Tools {
                             other_repr_t[0], other_repr_t[1], other_type
                         );
                         logic.reverseMove();
-                        rank = (other_rank == -1) ? n * n : 5*other_rank - this_rank;
-                    } else rank = 5*other_default_rank - this_rank;
-
-                    System.out.println(taken.size());
+                        rank = (other_rank == -1) ? n * n : 2 * other_rank - this_rank;
+                    } else rank = 2 * other_default_rank - this_rank;
                     if (taken.size() < k) {
                         taken.add(new int[] {rank, i, j});
                     }
