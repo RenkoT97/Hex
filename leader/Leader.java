@@ -1,8 +1,10 @@
 package leader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Collections;
 
 import javax.swing.SwingWorker;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +27,7 @@ public class Leader {
     public static Tools tools;
     public static HexFrame hexframe;
     public static GameStatus status = GameStatus.VOID;
+    public static Random rangen = new Random();
 
     public static void newGame (
         int n, HexPlayer p1, HexPlayer p2, HexFrame f
@@ -91,7 +94,7 @@ public class Leader {
 		SwingWorker<int[], Void> worker = new SwingWorker<int[], Void> () {
 			@Override
 			protected int[] doInBackground() {
-                int[] poteza = getMachineMove(3, 1);
+                int[] poteza = getMachineMove(3 * hexgame.getLogic().n, 3, 4);
                 try {TimeUnit.SECONDS.sleep(1);} 
                 catch (Exception e) {};
 				return poteza;
@@ -105,23 +108,40 @@ public class Leader {
 		};
 		worker.execute();
     }
+
+    public static ArrayList<int[]> getRandomMoves(int k) {
+        ArrayList<int[]> arrayl = new ArrayList<int[]>();
+        ArrayList<int[]> ran = hexgame.getLogic().getEmptyFields();
+        k = Math.min(ran.size(), k);    
+        for (int i = 0; i < k; i++) {
+            int r = rangen.nextInt(ran.size());
+            System.out.println(r);
+            int[] move = ran.get(r);
+            System.out.println(move);
+            arrayl.add(move);
+            ran.remove(r);
+        }
+        System.out.println(arrayl.get(0));
+        return arrayl;
+    }
     
-    public static int[] getMachineMove (int k, int depth) {
-        //HexLogicDfs a = hexgame.getLogic();
-        System.out.println("neki");
-        System.out.println(hexgame.getLogic().n);
+    public static int[] getMachineMove (int k1, int k2, int depth) {
+        ArrayList<int[]> arrayl = hexgame.getLogic().getEmptyFields();
+        k1 = Math.min(arrayl.size() - 1, k1);
         Alphabeta alphabeta = new Alphabeta(hexgame.getLogic());
-        System.out.println("neki2");
         PlayerIndex p = hexgame.getLogic().currentPlayer;
-        ArrayList<int[]> arrayl = tools.getBestMoves(p, k);
+        Collections.shuffle(arrayl);
+        for (int i = k1; i < arrayl.size(); i++)
+            arrayl.remove(i);
+        //ArrayList<int[]> arrayl = getRandomMoves(k1);
+        //ArrayList<int[]> arrayl = tools.getBestMoves(hexgame.getLogic().currentPlayer, k1);
         int d = arrayl.size();
         double max = Double.NEGATIVE_INFINITY;
         int ind = 0;
-        System.out.println("neki3");
         for (int i = 0; i < d; i++) {
-            System.out.println("prob");
-            double value = alphabeta.alphabeta(depth, arrayl.get(i)[0], arrayl.get(i)[1], p, p, k);
-            System.out.println("endprob");
+            System.out.println(arrayl.get(i)[0]);
+            System.out.println(arrayl.get(i)[0]);
+            double value = alphabeta.alphabeta(depth, arrayl.get(i)[0], arrayl.get(i)[1], p, p, k2);
             if (value > max) {
                 max = value;
                 ind = i;
