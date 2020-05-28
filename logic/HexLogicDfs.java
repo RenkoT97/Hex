@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.Stack;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HashMap;
 
@@ -135,6 +136,15 @@ public class HexLogicDfs {
             }
         }
         return path;
+    }
+
+    public ArrayList<int[]> getEmptyFields() {
+        ArrayList<int[]> arr = new ArrayList<int[]>();
+        for (int i = 0; i < this.boardLength; i++)
+            for (int j = 0; j < this.boardLength; j++)
+                if (this.fieldEmpty(i, j))
+                    arr.add(new int[] {i, j});
+        return arr;
     }
 
     public void repr () {

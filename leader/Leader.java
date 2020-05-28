@@ -12,6 +12,7 @@ import enums.PlayerIndex;
 import enums.GameStatus;
 import logic.HexPlayer;
 import logic.HexGame;
+import logic.HexLogicDfs;
 import logic.HexLogicUnionFind;
 import geometry.HexFrame;
 
@@ -79,7 +80,6 @@ public class Leader {
             hexframe.updateAll();
         } else if (current.type.equals(PlayerType.MACHINE))
             playMachine();
-        
     }
 
     public static void playHuman (int i, int j) {
@@ -91,7 +91,7 @@ public class Leader {
 		SwingWorker<int[], Void> worker = new SwingWorker<int[], Void> () {
 			@Override
 			protected int[] doInBackground() {
-                int[] poteza = getMachineMove(5, 3);
+                int[] poteza = getMachineMove(3, 1);
                 try {TimeUnit.SECONDS.sleep(1);} 
                 catch (Exception e) {};
 				return poteza;
@@ -107,14 +107,21 @@ public class Leader {
     }
     
     public static int[] getMachineMove (int k, int depth) {
-        PlayerIndex p = logic.currentPlayer;
-        int n = leader.Leader.hexgame.n;
+        //HexLogicDfs a = hexgame.getLogic();
+        System.out.println("neki");
+        System.out.println(hexgame.getLogic().n);
+        Alphabeta alphabeta = new Alphabeta(hexgame.getLogic());
+        System.out.println("neki2");
+        PlayerIndex p = hexgame.getLogic().currentPlayer;
         ArrayList<int[]> arrayl = tools.getBestMoves(p, k);
         int d = arrayl.size();
         double max = Double.NEGATIVE_INFINITY;
         int ind = 0;
+        System.out.println("neki3");
         for (int i = 0; i < d; i++) {
-            double value = alphabeta(depth, arrayl.get(i)[1], arrayl.get(i)[2], p, p, n, k);
+            System.out.println("prob");
+            double value = alphabeta.alphabeta(depth, arrayl.get(i)[0], arrayl.get(i)[1], p, p, k);
+            System.out.println("endprob");
             if (value > max) {
                 max = value;
                 ind = i;
