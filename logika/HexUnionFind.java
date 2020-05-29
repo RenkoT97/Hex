@@ -1,4 +1,4 @@
-package logic;
+package logika;
 
 public class HexUnionFind {
     private int n;

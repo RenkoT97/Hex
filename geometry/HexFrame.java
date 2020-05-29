@@ -7,8 +7,8 @@ import javax.swing.*;
 import geometry.HexPanel;
 import enums.PlayerIndex;
 import enums.PlayerType;
-import logic.HexPlayer;
-import logic.HexGame;
+import logika.HexPlayer;
+import logika.HexGame;
 import leader.Leader;
 
 @SuppressWarnings("serial")
