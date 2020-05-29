@@ -10,7 +10,7 @@ import enums.FieldType;
 import leader.Leader;
 import geometry.HexGeometry;
 import geometry.Hexagon;
-import logic.HexPlayer;
+import logika.HexPlayer;
 
 @SuppressWarnings("serial")
 public class HexPanel extends JPanel implements

@@ -1,6 +1,6 @@
-package logic;
+package logika;
 
-import logic.HexGame;
+import logika.HexGame;
 import splosno.Koordinati;
 
 public class Igra extends HexGame {

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import enums.PlayerIndex;
 import inteligenca.Tools;
-import logic.*;
+import logika.*;
 
 public class Alphabeta {
 

@@ -1,4 +1,4 @@
-package logic;
+package logika;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -6,8 +6,8 @@ import java.util.HashSet;
 import enums.LeaderCode;
 import enums.PlayerIndex;
 import enums.FieldType;
-import logic.HexLogicDfs;
-import logic.HexPlayer;
+import logika.HexLogicDfs;
+import logika.HexPlayer;
 
 public class HexGame {
     public int n;

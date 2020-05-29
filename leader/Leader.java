@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
 import enums.PlayerType;
 import enums.PlayerIndex;
 import enums.GameStatus;
-import logic.HexPlayer;
-import logic.HexGame;
-import logic.HexLogicDfs;
-import logic.HexLogicUnionFind;
+import logika.HexPlayer;
+import logika.HexGame;
+import logika.HexLogicDfs;
+import logika.HexLogicUnionFind;
 import geometry.HexFrame;
 
 import inteligenca.Tools;

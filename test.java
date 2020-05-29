@@ -3,9 +3,9 @@ import java.util.ArrayList;
 
 import splosno.Koordinati;
 
-import logic.HexPlayer;
-import logic.HexLogicDfs;
-import logic.Igra;
+import logika.HexPlayer;
+import logika.HexLogicDfs;
+import logika.Igra;
 
 import inteligenca.Inteligenca;
 

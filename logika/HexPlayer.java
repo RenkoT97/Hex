@@ -1,4 +1,4 @@
-package logic;
+package logika;
 
 import java.awt.Color;
 
