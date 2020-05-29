@@ -108,46 +108,26 @@ public class Leader {
 		};
 		worker.execute();
     }
-
-    public static ArrayList<int[]> getRandomMoves(int k) {
-        ArrayList<int[]> arrayl = new ArrayList<int[]>();
-        ArrayList<int[]> ran = hexgame.getLogic().getEmptyFields();
-        k = Math.min(ran.size(), k);    
-        for (int i = 0; i < k; i++) {
-            int r = rangen.nextInt(ran.size());
-            System.out.println(r);
-            int[] move = ran.get(r);
-            System.out.println(move);
-            arrayl.add(move);
-            ran.remove(r);
-        }
-        System.out.println(arrayl.get(0));
-        return arrayl;
-    }
     
     public static int[] getMachineMove (int k1, int k2, int depth) {
-        ArrayList<int[]> arrayl = hexgame.getLogic().getEmptyFields();
-        k1 = Math.min(arrayl.size() - 1, k1);
         Alphabeta alphabeta = new Alphabeta(hexgame.getLogic());
         PlayerIndex p = hexgame.getLogic().currentPlayer;
-        Collections.shuffle(arrayl);
-        for (int i = k1; i < arrayl.size(); i++)
-            arrayl.remove(i);
-        //ArrayList<int[]> arrayl = getRandomMoves(k1);
-        //ArrayList<int[]> arrayl = tools.getBestMoves(hexgame.getLogic().currentPlayer, k1);
+        ArrayList<int[]> arrayl = tools.getBestMoves(hexgame.getLogic().currentPlayer, k1);
         int d = arrayl.size();
+        System.out.println(arrayl.get(1)[0]);
+        System.out.println(arrayl.get(1)[1]);
         double max = Double.NEGATIVE_INFINITY;
         int ind = 0;
-        for (int i = 0; i < d; i++) {
-            System.out.println(arrayl.get(i)[0]);
-            System.out.println(arrayl.get(i)[0]);
-            double value = alphabeta.alphabeta(depth, arrayl.get(i)[0], arrayl.get(i)[1], p, p, k2);
+        for (int i = 0; i < d-1; i++) {
+            double value = alphabeta.alphabeta(depth, arrayl.get(i)[1], arrayl.get(i)[2], p, p, k2);
             if (value > max) {
                 max = value;
                 ind = i;
             }
         }
         int[] move = new int[] {arrayl.get(ind)[1], arrayl.get(ind)[2]};
-        return move;
+        if (move[1] == (int) move[1]) return move;
+        ArrayList<int[]> array = hexgame.getLogic().getEmptyFields();
+        return array.get(rangen.nextInt(array.size() - 1));
     }
 }
