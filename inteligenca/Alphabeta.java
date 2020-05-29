@@ -67,7 +67,6 @@ public class Alphabeta {
             }
             for (int[] neighbour : moves) {
                 value = Math.min(value, alphabeta(depth-1, neighbour[1], neighbour[2], logic.currentPlayer, maximizingPlayer, k));
-                System.out.println(value);
                 beta = Math.min(beta, value);
                 if (alfa >= beta) {
                     continue;

@@ -114,8 +114,6 @@ public class Leader {
         PlayerIndex p = hexgame.getLogic().currentPlayer;
         ArrayList<int[]> arrayl = tools.getBestMoves(hexgame.getLogic().currentPlayer, k1);
         int d = arrayl.size();
-        System.out.println(arrayl.get(1)[0]);
-        System.out.println(arrayl.get(1)[1]);
         double max = Double.NEGATIVE_INFINITY;
         int ind = 0;
         for (int i = 0; i < d-1; i++) {

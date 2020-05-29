@@ -12,7 +12,6 @@ import inteligenca.Inteligenca;
 class test {
     private static Random rangen = new Random();
     public static void main(String[] args) {
-        for (int i = 0; i < 100; i++) {
 
         Igra igra = new Igra ();
         HexLogicDfs logic = igra.getLogic();
@@ -28,7 +27,9 @@ class test {
                     ij = new Koordinati (move[0], move[1]);
                     break;
                 case PLAYER1: 
+                    System.out.println("HERE");
                     ij = intel.izberiPotezo(igra);
+                    System.out.println("BY");
                     break;
             }
             igra.odigraj(ij);
@@ -37,7 +38,5 @@ class test {
         System.out.println(
             "Winner is " + igra.getLastPlayer().index.name()
         );
-
-        }
     }
 }
