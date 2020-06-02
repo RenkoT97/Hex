@@ -9,7 +9,7 @@ import enums.FieldType;
 import enums.PlayerIndex;
 
 @SuppressWarnings("serial")
-public class HexLogicDfs {
+public class HexLogicDfs { // implementation of hex logic, checking winners with dfs
     public int boardLength, n;
     public PlayerIndex currentPlayer, winner;
     private FieldType[][] board;
@@ -26,7 +26,7 @@ public class HexLogicDfs {
     public HexLogicDfs (int n) {
         this.boardLength = this.n = n;
         this.currentPlayer = PlayerIndex.PLAYER0;
-        this.placementStack = new Stack<int[]> ();
+        this.placementStack = new Stack<int[]> (); // to remember previous moves taken
         this.board = new FieldType[n][n];
         for (int i = 0; i < n; i++) 
             for (int j = 0; j < n; j++) 
@@ -74,6 +74,7 @@ public class HexLogicDfs {
         this.shiftCurrentPlayer();
     }
 
+    // checks if the player has won
     public boolean hasWon (PlayerIndex player) {
         FieldType fieldt = indexToField.get(player);
         HashSet<int[]> path = pathDfs(
@@ -108,6 +109,7 @@ public class HexLogicDfs {
         );
     }
 
+    // returns the component of the field source
     private HashSet<int[]> pathDfs (
         FieldType t, int[] source
     ) {

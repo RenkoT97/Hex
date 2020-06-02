@@ -34,21 +34,22 @@ public class Leader {
     public static void newGame (
         int n, HexPlayer p1, HexPlayer p2, HexFrame f
     ) {
-        status = GameStatus.ACTIVE;
+        status = GameStatus.ACTIVE; // mark the game is active
         hexgame = new HexGame(n, p1, p2);
         hexframe = f;
         tools = new Tools(hexgame.getLogic());
-        intel = new Inteligenca();
+        intel = new Inteligenca(hexgame.getLogic());
         HexPlayer current = hexgame.getCurrentPlayer();
         if (current.type.equals(PlayerType.MACHINE))
-            playMachine();
+            playMachine(); // if machine is the first to start
     }
 
     public static void clearGame () {
         hexgame = null;
-        status = GameStatus.VOID;
+        status = GameStatus.VOID; // mark the game inactive
     }
 
+    // check if its human's turn
     public static boolean humanTurn () {
         if (!status.equals(GameStatus.ACTIVE)) return false;
         HexPlayer currentPlayer = hexgame.getCurrentPlayer();
@@ -66,13 +67,16 @@ public class Leader {
         return hexgame.getWinner();
     }
 
+    // get the path of the winning player
     public static HashSet<int[]> winningPath () {
         return hexgame.getWinningPath();
     }
 
-    public static void playBase (int i, int j) {
+    // someone played a field i, j
+    private static void playBase (int i, int j) {
         if (!status.equals(GameStatus.ACTIVE)) return;
-        boolean isvalid = hexgame.playTurn(i, j);
+        // returns true if move was valid
+        boolean isvalid = hexgame.playTurn(i, j); 
         if (!isvalid) return;
         HexPlayer recent = hexgame.getLastPlayer();
         HexPlayer current = hexgame.getCurrentPlayer();
@@ -98,8 +102,6 @@ public class Leader {
 			@Override
 			protected int[] doInBackground() {
                 int[] poteza = getMachineMove();
-                try {TimeUnit.SECONDS.sleep(1);} 
-                catch (Exception e) {};
 				return poteza;
 			}
 			@Override
@@ -114,7 +116,7 @@ public class Leader {
     
     public static int[] getMachineMove () {
         HexLogicDfs logic = hexgame.getLogic();
-        int[] ij = intel._izberiPotezo(logic, 3 * logic.n, 3, 4);
+        int[] ij = intel.getMove(3 * logic.n, 3, 4);
         return ij;
     }
 }

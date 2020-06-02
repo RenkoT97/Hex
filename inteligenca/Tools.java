@@ -37,6 +37,7 @@ public class Tools {
         return null;
     }
 
+    // gets the best move for type field
     public int[] getBestMove (FieldType type) {
         int minpath = n*n*n*n;
         int[] minpos = new int[] {0,0};
@@ -53,6 +54,7 @@ public class Tools {
         return minpos;
     }
 
+    // used by getBestMoves function to get the smallest element's index
     private int[] minListRank (ArrayList<int[]> list) {
         int mn = n * n * n *n;
         int mnindex = 0;
@@ -67,6 +69,7 @@ public class Tools {
         return new int[] {mnindex, mn};
     }
 
+    // returns k fields that are considered best to play
     public ArrayList<int[]> getBestMoves (PlayerIndex p, int k) {
         ArrayList<int[]> taken = new ArrayList<int[]> ();
 
@@ -74,11 +77,14 @@ public class Tools {
         FieldType other_type = playerIndexToFieldType(other);
         FieldType this_type = playerIndexToFieldType(p);
         
+        // other player's best move (field)
         int[] other_repr = getBestMove(other_type);
-        // pathDistance ze zracuna path v procesu
+        // other player's best ranking
         int other_default_rank = pathDistance(
             other_repr[0], other_repr[1], other_type
         );
+        // other player's path, represented by a matrix
+        // path[i][j] == true <=> (i, j) in path
         boolean[][] path = shortestPath(
             other_repr[0], other_repr[1], other_type
         );
@@ -86,16 +92,19 @@ public class Tools {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (logic.fieldEmpty(i, j)) {
-                    int rank;
+                    int rank; // rank of the field
                     int this_rank = pathDistance(i, j, this_type);
-                    if (this_rank == 0) rank = n*n; // winning pos
-                    else if (path[i][j]) {
+                    if (this_rank == 0) rank = n*n; // winning position
+                    else if (path != null && path[i][j]) {
+                        // if field is on other player's best path
+                        // recalculate his position rank
                         logic.makeMove(p, i, j);
                         int[] other_repr_t = getBestMove(other_type);
                         int other_rank = pathDistance(
                             other_repr_t[0], other_repr_t[1], other_type
                         );
                         logic.reverseMove();
+                        // final rank definition
                         rank = (other_rank == -1) ? n * n : 10 * other_rank - this_rank;
                     } else rank = 10 * other_default_rank - this_rank;
                     if (taken.size() < k) {
@@ -139,6 +148,8 @@ public class Tools {
         return pointer;
     }
 
+    // gets the smallest amount of empty nodes needed for
+    // player to win by placing (s, t) (using bfs)
     public boolean[][] shortestPath (int s, int t, FieldType type) {
         int index = (type.equals(FieldType.TYPE0)) ? 0 : 1;
         int[][] marked = markedList();
@@ -195,17 +206,8 @@ public class Tools {
         return onpath;
     } 
 
-    public int pathDistanceProof (int s, int t, FieldType type) {
-        boolean[][] mat = shortestPath (s, t, type);
-        if (mat == null) return -1;
-        int dist = 0;
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                if (mat[i][j]) dist++;
-        return dist;
-    }
-
-    // this is an approximation (could be off in rare cases)
+    // this is an approximation for the algorithm above
+    // (could be off in 'rare' cases)
     public int pathDistance (int s, int t, FieldType type) {
         int index = (type.equals(FieldType.TYPE0)) ? 0 : 1;
         int[][] distance = distanceList();

@@ -3,24 +3,22 @@ package inteligenca;
 import java.util.ArrayList;
 import java.util.Random;
 
-import splosno.Koordinati;
 import splosno.KdoIgra;
-
 import enums.PlayerIndex;
-
 import logika.HexLogicDfs;
-import logika.Igra;
 
 public class Inteligenca extends KdoIgra {
+    private HexLogicDfs logic;
     private Tools tools;
     public static Random rangen = new Random();
 
-    public Inteligenca ()  {
+    public Inteligenca (HexLogicDfs logic)  {
         super("Nejc & Tjaša");
-        this.tools = null;
+        this.logic = logic;
+        this.tools = new Tools(logic);
     }
 
-    public int[] _izberiPotezo(HexLogicDfs logic, int k1, int k2, int depth) {
+    public int[] getMove(int k1, int k2, int depth) {
         Alphabeta alphabeta = new Alphabeta(logic);
         PlayerIndex p = logic.currentPlayer;
         ArrayList<int[]> arrayl = tools.getBestMoves(logic.currentPlayer, k1);
@@ -35,15 +33,12 @@ public class Inteligenca extends KdoIgra {
             }
         }
         int[] move = new int[] {arrayl.get(ind)[1], arrayl.get(ind)[2]};
-        if (move[1] == (int) move[1]) return move;
+        if (move[1] == (int) move[1]) {
+            System.out.println(move[0] + " " + move[1]);
+            logic.repr();
+            return move;
+        }
         ArrayList<int[]> array = logic.getEmptyFields();
         return array.get(rangen.nextInt(array.size() - 1));
-    }
-
-    public int[] izberiPotezo (Igra igra) {
-        HexLogicDfs logic = igra.getLogic();
-        if (this.tools == null) this.tools = new Tools(logic);
-        int[] ij = _izberiPotezo(logic, 3 * logic.n, 3, 4);
-        return ij;
     }
 }
