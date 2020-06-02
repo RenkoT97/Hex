@@ -20,10 +20,12 @@ import geometry.HexFrame;
 
 import inteligenca.Tools;
 import inteligenca.Alphabeta;
+import inteligenca.Inteligenca;
 
 public class Leader {
     public static int N;
     public static HexGame hexgame;
+    public static Inteligenca intel;
     public static Tools tools;
     public static HexFrame hexframe;
     public static GameStatus status = GameStatus.VOID;
@@ -36,6 +38,7 @@ public class Leader {
         hexgame = new HexGame(n, p1, p2);
         hexframe = f;
         tools = new Tools(hexgame.getLogic());
+        intel = new Inteligenca();
         HexPlayer current = hexgame.getCurrentPlayer();
         if (current.type.equals(PlayerType.MACHINE))
             playMachine();
@@ -94,7 +97,7 @@ public class Leader {
 		SwingWorker<int[], Void> worker = new SwingWorker<int[], Void> () {
 			@Override
 			protected int[] doInBackground() {
-                int[] poteza = getMachineMove(3 * hexgame.getLogic().n, 3, 4);
+                int[] poteza = getMachineMove();
                 try {TimeUnit.SECONDS.sleep(1);} 
                 catch (Exception e) {};
 				return poteza;
@@ -109,23 +112,9 @@ public class Leader {
 		worker.execute();
     }
     
-    public static int[] getMachineMove (int k1, int k2, int depth) {
-        Alphabeta alphabeta = new Alphabeta(hexgame.getLogic());
-        PlayerIndex p = hexgame.getLogic().currentPlayer;
-        ArrayList<int[]> arrayl = tools.getBestMoves(hexgame.getLogic().currentPlayer, k1);
-        int d = arrayl.size();
-        double max = Double.NEGATIVE_INFINITY;
-        int ind = 0;
-        for (int i = 0; i < d-1; i++) {
-            double value = alphabeta.alphabeta(depth, arrayl.get(i)[1], arrayl.get(i)[2], p, p, k2);
-            if (value > max) {
-                max = value;
-                ind = i;
-            }
-        }
-        int[] move = new int[] {arrayl.get(ind)[1], arrayl.get(ind)[2]};
-        if (move[1] == (int) move[1]) return move;
-        ArrayList<int[]> array = hexgame.getLogic().getEmptyFields();
-        return array.get(rangen.nextInt(array.size() - 1));
+    public static int[] getMachineMove () {
+        HexLogicDfs logic = hexgame.getLogic();
+        int[] ij = intel._izberiPotezo(logic, 3 * logic.n, 3, 4);
+        return ij;
     }
 }

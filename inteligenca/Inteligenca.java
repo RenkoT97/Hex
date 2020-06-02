@@ -20,7 +20,7 @@ public class Inteligenca extends KdoIgra {
         this.tools = null;
     }
 
-    private int[] _izberiPotezo(HexLogicDfs logic, int depth, int k1, int k2) {
+    public int[] _izberiPotezo(HexLogicDfs logic, int k1, int k2, int depth) {
         Alphabeta alphabeta = new Alphabeta(logic);
         PlayerIndex p = logic.currentPlayer;
         ArrayList<int[]> arrayl = tools.getBestMoves(logic.currentPlayer, k1);
@@ -40,10 +40,10 @@ public class Inteligenca extends KdoIgra {
         return array.get(rangen.nextInt(array.size() - 1));
     }
 
-    public Koordinati izberiPotezo (Igra igra) {
+    public int[] izberiPotezo (Igra igra) {
         HexLogicDfs logic = igra.getLogic();
         if (this.tools == null) this.tools = new Tools(logic);
         int[] ij = _izberiPotezo(logic, 3 * logic.n, 3, 4);
-        return new Koordinati(ij[0], ij[1]);
+        return ij;
     }
 }
