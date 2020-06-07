@@ -97,7 +97,7 @@ public class Server {
 			@Override
 			protected int[] doInBackground() {
                 //int[] poteza = getMachineMove();
-                int[] poteza = getMachineMove(3 * hexgame.getLogic().n, 3, 4);
+                int[] poteza = getMachineMove(6 * hexgame.getLogic().n, 3, 4);
 				return poteza;
 			}
 			@Override
@@ -121,7 +121,7 @@ public class Server {
         double max = -50.0;
         int ind = 0;
         for (int i = 0; i < d-1; i++) {
-            double value = alphabeta.alphabeta(depth, arrayl.get(i)[1], arrayl.get(i)[2], p, p, k2);
+            double value = alphabeta.alphabeta(depth, 1.0, arrayl.get(i)[1], arrayl.get(i)[2], p, p, k2);
             if (value > max) {
                 max = value;
                 ind = i;
