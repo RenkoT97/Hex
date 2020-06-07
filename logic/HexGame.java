@@ -1,24 +1,14 @@
-package logika;
+package logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-import enums.LeaderCode;
 import enums.PlayerIndex;
-import enums.FieldType;
-import logika.HexLogicDfs;
-import logika.HexPlayer;
 
 public class HexGame {
     public int n;
     private HexLogicDfs hexlogic;
     public HashMap<PlayerIndex, HexPlayer> playermap;
-    private static HexPlayer defaultP0 = new HexPlayer(
-        PlayerIndex.PLAYER0, null, null
-    );
-    private static HexPlayer defaultP1 = new HexPlayer(
-        PlayerIndex.PLAYER1, null, null
-    );
 
     public HexGame(int n, HexPlayer p0, HexPlayer p1) {
         this.n = n;
@@ -29,7 +19,10 @@ public class HexGame {
     }
 
     public HexGame(int n) {
-        this(n, defaultP0, defaultP1);
+        this(n, 
+            new HexPlayer(PlayerIndex.PLAYER0, null, null), 
+            new HexPlayer(PlayerIndex.PLAYER1, null, null)
+        );
     }
 
     public boolean playTurn (HexPlayer p, int i, int j) {

@@ -1,4 +1,4 @@
-package inteligenca;
+package inteligence;
 
 import java.util.LinkedList;
 import java.util.Deque;
@@ -7,16 +7,15 @@ import java.util.ArrayList;
 import enums.FieldType;
 import enums.PlayerIndex;
 
-import logika.HexPlayer;
-import logika.HexLogicDfs;
+import logic.HexLogicDfs;
 
 
-public class Tools {
+public class Rankings {
     private int n;
     private HexLogicDfs logic;
     private static int[][] fieldR = HexLogicDfs.fieldRelations;
 
-    public Tools (HexLogicDfs logic) {
+    public Rankings (HexLogicDfs logic) {
         this.logic = logic;
         this.n = logic.n;
     }

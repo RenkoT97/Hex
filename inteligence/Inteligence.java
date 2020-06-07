@@ -1,21 +1,19 @@
-package inteligenca;
+package inteligence;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import splosno.KdoIgra;
 import enums.PlayerIndex;
-import logika.HexLogicDfs;
+import logic.HexLogicDfs;
 
-public class Inteligenca extends KdoIgra {
+public class Inteligence {
     private HexLogicDfs logic;
-    private Tools tools;
+    private Rankings tools;
     public static Random rangen = new Random();
 
-    public Inteligenca (HexLogicDfs logic)  {
-        super("Nejc & Tjaša");
+    public Inteligence (HexLogicDfs logic)  {
         this.logic = logic;
-        this.tools = new Tools(logic);
+        this.tools = new Rankings(logic);
     }
 
     public int[] getMove(int k1, int k2, int depth) {

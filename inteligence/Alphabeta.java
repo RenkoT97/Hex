@@ -1,18 +1,17 @@
-package inteligenca;
+package inteligence;
 
 import java.util.ArrayList;
 
 import enums.PlayerIndex;
-import inteligenca.Tools;
-import logika.*;
+import logic.*;
 
 public class Alphabeta {
 
     public HexLogicDfs logic;
-    private Tools tools;
+    private Rankings tools;
     public Alphabeta(HexLogicDfs logic) {
         this.logic = logic;
-        this.tools = new Tools(logic);
+        this.tools = new Rankings(logic);
     }
     
     public double alphabeta(int depth, int hexRow, int hexColumn, PlayerIndex player, PlayerIndex maximizingPlayer, int k) {

@@ -7,10 +7,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import enums.FieldType;
-import leader.Leader;
-import geometry.HexGeometry;
-import geometry.Hexagon;
-import logika.HexPlayer;
+import server.Server;
+import logic.HexPlayer;
 
 @SuppressWarnings("serial")
 public class HexPanel extends JPanel implements
@@ -21,7 +19,6 @@ public class HexPanel extends JPanel implements
     public static Color COLOR_HOVER = new Color(15, 15, 15);
     public static Color COLOR_PLAYER0 = new Color(255, 128, 0);
     public static Color COLOR_PLAYER1 = new Color(80, 168, 227);
-    public static Color COLOR_WINNING = new Color(255, 0, 0);
 
     private int n, width, height;
     private Hexagon hovering;
@@ -64,7 +61,7 @@ public class HexPanel extends JPanel implements
     public void markWinningPath (HashSet<int[]> path) {
         for (int[] ij : path) {
             Hexagon hx = this.geometry.getHexagonByIndex(ij[0], ij[1]);
-            hx.borderColor = COLOR_WINNING;
+            hx.borderColor = hx.color;
         }
         this.repaint();
     }
@@ -90,7 +87,7 @@ public class HexPanel extends JPanel implements
         int x = e.getX(); int y = e.getY();
         int[] ij = geometry.getIndexByPosition(x, y);
         if (ij == null) return;
-        Leader.playHuman (ij[0], ij[1]);
+        Server.playHuman (ij[0], ij[1]);
     }
 
     @Override

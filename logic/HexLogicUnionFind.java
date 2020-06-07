@@ -1,9 +1,8 @@
-package logika;
+package logic;
 
 import java.util.Stack;
 import java.util.HashSet;
 
-import logika.HexUnionFind;
 import enums.FieldType;
 import enums.PlayerIndex;
 

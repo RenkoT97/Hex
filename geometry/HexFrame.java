@@ -4,12 +4,11 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import geometry.HexPanel;
 import enums.PlayerIndex;
 import enums.PlayerType;
-import logika.HexPlayer;
-import logika.HexGame;
-import leader.Leader;
+import logic.HexPlayer;
+import logic.HexGame;
+import server.Server;
 
 @SuppressWarnings("serial")
 public class HexFrame extends JFrame implements 
@@ -91,16 +90,16 @@ public class HexFrame extends JFrame implements
     private void updateStatus () {
         String build = "";
         HexPlayer player;
-        switch (Leader.status) {
+        switch (Server.status) {
             case ACTIVE: 
-                player = Leader.currentPlayer();
+                player = Server.currentPlayer();
                 build = String.format(
                     "Player Turn: %s",
                     player.index.name()
                 );
                 break;
             case FINISHED:
-                player = Leader.winningPlayer();
+                player = Server.winningPlayer();
                 build = String.format(
                     "Game Winner: %s",
                     player.index.name()
@@ -155,7 +154,7 @@ public class HexFrame extends JFrame implements
         if (name.equals("Game Size")) {
             int n = inputGameSize();
             this.resetHexSize (n);
-            Leader.clearGame();
+            Server.clearGame();
         } else if (name.equals("Player Types")) {
             String types = inputPlayerTypes();
             PlayerType t1, t2;
@@ -180,13 +179,13 @@ public class HexFrame extends JFrame implements
                 PlayerIndex.PLAYER1, t2,
                 HexPanel.COLOR_PLAYER1
             );
-            Leader.clearGame();
+            Server.clearGame();
         } else if (name.equals("Start Game")) {
             if (this.n > 0 && 
                 this.player0 != null &&
                 this.player1 != null &&
                 this.game == null
-            ) Leader.newGame(n, player0, player1, this);
+            ) Server.newGame(n, player0, player1, this);
         }
         updateStatus();
     }

@@ -1,32 +1,27 @@
-package leader;
+package server;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.Collections;
 
 import javax.swing.SwingWorker;
-import java.util.concurrent.TimeUnit;
 
 import enums.PlayerType;
 import enums.PlayerIndex;
 import enums.GameStatus;
-import logika.HexPlayer;
-import logika.HexGame;
-import logika.HexLogicDfs;
-import logika.HexLogicUnionFind;
+import logic.HexPlayer;
+import logic.HexGame;
 import geometry.HexFrame;
 
-import inteligenca.Tools;
-import inteligenca.Alphabeta;
-import inteligenca.Inteligenca;
+import inteligence.Rankings;
+import inteligence.Alphabeta;
+import inteligence.Inteligence;
 
-public class Leader {
+public class Server {
     public static int N;
     public static HexGame hexgame;
-    public static Inteligenca intel;
-    public static Tools tools;
+    public static Inteligence intel;
+    public static Rankings tools;
     public static HexFrame hexframe;
     public static GameStatus status = GameStatus.VOID;
     public static Random rangen = new Random();
@@ -37,8 +32,8 @@ public class Leader {
         status = GameStatus.ACTIVE; // mark the game is active
         hexgame = new HexGame(n, p1, p2);
         hexframe = f;
-        tools = new Tools(hexgame.getLogic());
-        intel = new Inteligenca(hexgame.getLogic());
+        tools = new Rankings(hexgame.getLogic());
+        intel = new Inteligence(hexgame.getLogic());
         HexPlayer current = hexgame.getCurrentPlayer();
         if (current.type.equals(PlayerType.MACHINE))
             playMachine(); // if machine is the first to start
@@ -114,12 +109,6 @@ public class Leader {
 		};
 		worker.execute();
     }
-    /*
-    public static int[] getMachineMove () {
-        HexLogicDfs logic = hexgame.getLogic();
-        int[] ij = intel.getMove(3 * logic.n, 3, 4);
-        return ij;
-    }*/
     public static int[] getMachineMove (int k1, int k2, int depth) {
         Alphabeta alphabeta = new Alphabeta(hexgame.getLogic());
         PlayerIndex p = hexgame.getLogic().currentPlayer;

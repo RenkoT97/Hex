@@ -42,28 +42,6 @@ public class HexGeometry {
 		calculateTriangleHeight();
 		calculateMargins();
 		setHexagonPoints();
-
-		/*
-		System.out.println("ZAČETEK");
-		System.out.println("marginX:");
-		System.out.println(this.marginX);
-		System.out.println("marginY:");
-		System.out.println(this.marginY);
-		System.out.println("prvi 6kotnik:");
-		//System.out.println(this.hexagonMatrix[0][0]);
-		System.out.println("visina:");
-		System.out.println(this.panelHeight);
-		System.out.println("sirina:");
-		System.out.println(this.panelWidth);
-		System.out.println("zadnji 6kotnik:");
-		//System.out.println(this.hexagonMatrix[this.boardSize-1][this.boardSize-1]);
-		System.out.println("STRANICA:");
-		System.out.println(this.hexagonEdge);
-		System.out.println("Sirina plosce:");
-		System.out.println(this.triangleHeight * (3*this.boardSize - 1));
-		System.out.println("Visina plosce:");
-		System.out.println(this.hexagonEdge * (3*this.boardSize + 1) / 2);
-		*/
 	}
 
 	private void calculateEdgeLenght() {
