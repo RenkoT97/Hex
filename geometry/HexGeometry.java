@@ -67,8 +67,8 @@ public class HexGeometry {
 	}
 
 	private void calculateEdgeLenght() {
-		double boardHeight = this.panelHeight;
-		double boardWidth = this.panelWidth;
+		double boardHeight = this.panelHeight - 20;
+		double boardWidth = this.panelWidth - 20;
 		this.hexagonEdge = 2 * Math.min(
 			boardWidth
 		/ (HexGeometry.SQRT3 * (3.0 * this.boardSize - 1)), 

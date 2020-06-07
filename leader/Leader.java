@@ -101,7 +101,8 @@ public class Leader {
 		SwingWorker<int[], Void> worker = new SwingWorker<int[], Void> () {
 			@Override
 			protected int[] doInBackground() {
-                int[] poteza = getMachineMove();
+                //int[] poteza = getMachineMove();
+                int[] poteza = getMachineMove(3 * hexgame.getLogic().n, 3, 4);
 				return poteza;
 			}
 			@Override
@@ -113,10 +114,35 @@ public class Leader {
 		};
 		worker.execute();
     }
-    
+    /*
     public static int[] getMachineMove () {
         HexLogicDfs logic = hexgame.getLogic();
         int[] ij = intel.getMove(3 * logic.n, 3, 4);
         return ij;
+    }*/
+    public static int[] getMachineMove (int k1, int k2, int depth) {
+        Alphabeta alphabeta = new Alphabeta(hexgame.getLogic());
+        PlayerIndex p = hexgame.getLogic().currentPlayer;
+        ArrayList<int[]> arrayl = tools.getBestMoves(hexgame.getLogic().currentPlayer, k1);
+        int d = arrayl.size();
+        if (d==0) {
+            ArrayList<int[]> array = hexgame.getLogic().getEmptyFields();
+            return array.get(rangen.nextInt(array.size() - 1));
+        }
+        double max = -50.0;
+        int ind = 0;
+        for (int i = 0; i < d-1; i++) {
+            double value = alphabeta.alphabeta(depth, arrayl.get(i)[1], arrayl.get(i)[2], p, p, k2);
+            if (value > max) {
+                max = value;
+                ind = i;
+            }
+        }
+        if (arrayl.isEmpty() == false) {
+            int[] move = new int[] {arrayl.get(ind)[1], arrayl.get(ind)[2]};
+            if (move[1] == (int) move[1]) return move;
+        }
+        ArrayList<int[]> array = hexgame.getLogic().getEmptyFields();
+        return array.get(rangen.nextInt(array.size() - 1));
     }
 }

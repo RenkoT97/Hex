@@ -17,16 +17,16 @@ public class Alphabeta {
     
     public double alphabeta(int depth, int hexRow, int hexColumn, PlayerIndex player, PlayerIndex maximizingPlayer, int k) {
         if (logic.fieldEmpty(hexRow, hexColumn) == false) {
-            return -logic.n * logic.n;
+            return -1.0 * logic.n * logic.n;
         }
         logic.makeMove(player, hexRow, hexColumn);
-        double alfa = Double.POSITIVE_INFINITY;
-        double beta = Double.NEGATIVE_INFINITY;
+        double alfa = 1.0 * logic.n *logic.n;
+        double beta = -1.0 * logic.n *logic.n;
         if (depth < 1) {
             logic.reverseMove();
             ArrayList<int[]> moves = tools.getBestMoves(logic.currentPlayer, k);
             if (moves.isEmpty()) {
-                return -logic.n * logic.n;
+                return -1.0 * logic.n * logic.n;
             }
             if (player == maximizingPlayer) {
                 double value = -logic.n * logic.n;;
@@ -36,7 +36,7 @@ public class Alphabeta {
                 return value;
             }
             else {
-                double value = Double.POSITIVE_INFINITY;
+                double value = 1.0 * logic.n * logic.n;
                 for (int[] neighbour : moves) {
                     value = Math.min(value, neighbour[0]);
                 }
@@ -44,10 +44,11 @@ public class Alphabeta {
             }
         }
         if (player == maximizingPlayer) {
-            double value = Double.NEGATIVE_INFINITY;
+            double value = -1.0 * logic.n * logic.n;
             ArrayList<int[]> moves = tools.getBestMoves(logic.currentPlayer, k);
             if (moves.isEmpty()) {
-                return -logic.n * logic.n;
+                logic.reverseMove();
+                return -1.0 * logic.n * logic.n;
             }
             for (int[] neighbour : moves) {
                 value = Math.max(value, alphabeta(depth-1, neighbour[1], neighbour[2], logic.currentPlayer, maximizingPlayer, k));
@@ -60,10 +61,11 @@ public class Alphabeta {
             return value;
         }
         else {
-            double value = Double.POSITIVE_INFINITY;
+            double value = 1.0 * logic.n * logic.n;
             ArrayList<int[]> moves = tools.getBestMoves(logic.currentPlayer, k);
             if (moves.isEmpty()) {
-                return -logic.n *logic.n;
+                logic.reverseMove();
+                return -1.0 * logic.n * logic.n;
             }
             for (int[] neighbour : moves) {
                 value = Math.min(value, alphabeta(depth-1, neighbour[1], neighbour[2], logic.currentPlayer, maximizingPlayer, k));
