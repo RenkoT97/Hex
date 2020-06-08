@@ -24,7 +24,7 @@ public class Inteligence {
         double max = Double.NEGATIVE_INFINITY;
         int ind = 0;
         for (int i = 0; i < d-1; i++) {
-            double value = alphabeta.alphabeta(depth, arrayl.get(i)[1], arrayl.get(i)[2], p, p, k2);
+            double value = alphabeta.alphabeta(depth, 1.0, arrayl.get(i)[1], arrayl.get(i)[2], p, p, k2);
             if (value > max) {
                 max = value;
                 ind = i;
