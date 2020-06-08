@@ -15,7 +15,7 @@ public class Alphabeta {
     }
     
     public double alphabeta(int depth, double addpt, int hexRow, int hexColumn, PlayerIndex player, PlayerIndex maximizingPlayer, int k) {
-        addpt += 0;
+        addpt -= 0.0;
         if (logic.fieldEmpty(hexRow, hexColumn) == false) {
             return -1.0 * logic.n * logic.n;
         }
